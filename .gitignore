@@ -1,0 +1,10 @@
+/build/
+/dist/
+/node_modules/
+/test-results/
+/playwright-report/
+*.log
+/vendor/
+/android/build/
+*.keystore
+*.jks

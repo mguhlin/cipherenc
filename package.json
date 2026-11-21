@@ -1,0 +1,12 @@
+{
+  "name": "cipherenc-tests",
+  "private": true,
+  "scripts": {
+    "test": "node scripts/web-checks.cjs",
+    "test:interop": "node scripts/browser-interop.cjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "axe-core": "4.11.0"
+  }
+}

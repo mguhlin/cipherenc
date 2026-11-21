@@ -1,0 +1,38 @@
+[
+  {
+    "name": "browser-CS4",
+    "password": "Synthetic independent passphrase!",
+    "data": "Q1NQQ1M0ISEAAADAeyJ2Ijo0LCJhbGciOiJBRVMtMjU2LUdDTS1DSFVOS0VEIiwia2RmIjoiQXJnb24yaWQtdjEuMyIsIm1lbW9yeSI6NjU1MzYsInBhc3NlcyI6MywicGFyYWxsZWxpc20iOjEsImtleUxlbmd0aCI6MzIsInNhbHQiOiJpbDBHOTNLSDV2TngwMVZhYkVTcHN3PT0iLCJwcmVmaXgiOiJTV1JwdnlPb0hHYz0iLCJjaHVua1NpemUiOjQxOTQzMDR9AAAAbgAAAH5fB4iNR9hI3wInJJtDm7B7hBWyDxyorZ1vxOyn8E55R/+P2c8cUl5uu8butxVA14D8REgwb4d3E8lFjJ7+zi3jbsX1OJZcmRfvMq14a3FHxTb4PSdVrJ3tt+jsbnTbjSCkBKoxDzLWlnWbscMWa19ypoqGR3RMTWA0uEI4UEMAAAAnAAAANxtS5RAHcuzeTgXROse+gCTp6UWrWqLJaoPRZNAX+fpPFqABnXO/slOPOQQjVn5lPgWC2yKJ3QE=",
+    "expected": "Independent CipherSplat browser fixture"
+  },
+  {
+    "name": "browser-text-v3",
+    "password": "Synthetic independent passphrase!",
+    "data": "Q1NQVFhUMyEAAACkeyJ2IjozLCJhbGciOiJBRVMtMjU2LUdDTSIsImtkZiI6IkFyZ29uMmlkLXYxLjMiLCJtZW1vcnkiOjY1NTM2LCJwYXNzZXMiOjMsInBhcmFsbGVsaXNtIjoxLCJrZXlMZW5ndGgiOjMyLCJzYWx0IjoiOW5nN1k3aXhCckNTWVh0NWpySmk1UT09IiwiaXYiOiJld3ViS1JMM2ZFR2h4MUx0In1ugI3y3zEKgAbfYEBOtXNeh88hHPr38OrCbMqEqp8LJTQ0lgCel/pxjQua+ilaQ7uf0oHdTQQ51nvUDPfBBI2ojhN7payVsA6iDB0YFwH9SWYgJZ7DfBrYNzGjI8foYWit4UHsIQiHwI2gynt1VAKyaEJ1wxHmbjJ7MWW19sV5oNtAb5U5jJ86P7PFYtrA",
+    "expected": "Independent CipherSplat browser fixture"
+  },
+  {
+    "name": "browser-text-v2",
+    "password": "Synthetic independent passphrase!",
+    "data": "Q1NQVFhUMiEAAAB6eyJ2IjoyLCJhbGciOiJBRVMtMjU2LUdDTSIsImtkZiI6IlBCS0RGMi1TSEEtMjU2IiwiaXRlciI6NjAwMDAwLCJzYWx0IjoiczVOWnprQm1jcjl1WjhZeU1rSWQvZz09IiwiaXYiOiJlTlI3ZDBtaTdjUkNzcWF4In3pel4RgY0dlA3LZtOtS0FzvfsLqi+L014diEaTXUTgG6P9nLZFjkkwhjmxUI3/jHVtuwsnCBkGkt4nI/TDegVB9Mp+0fJB6w8XVkZQ5T5KZ6pdrN5nFkBnVrUwpXc2D/aZI/35htDywykCkDXblr1yV6Zx8U8hVas4j6qU+eu17/41+5fsXXn6NLiTLf0=",
+    "expected": "Independent CipherSplat browser fixture"
+  },
+  {
+    "name": "browser-text-v1",
+    "password": "Synthetic independent passphrase!",
+    "data": "TklWT1JBMSEAAAB6eyJ2IjoxLCJhbGciOiJBRVMtMjU2LUdDTSIsImtkZiI6IlBCS0RGMi1TSEEtMjU2IiwiaXRlciI6NjAwMDAwLCJzYWx0IjoiczVOWnprQm1jcjl1WjhZeU1rSWQvZz09IiwiaXYiOiJlTlI3ZDBtaTdjUkNzcWF4In3pel4RgY0dlA3LZtOtS0FzvfsLqi+L014diEaTXUTgG6P9nLZFjkkwhjmxUI3/jHVtuwsnCBkGkt4nI/TDegVB9Mp+0fJA6w8XVkZQ5T5KZ6pdrN5nFkBnVrUwpXc2D/aZI/35htDywykCkDXblr1yV6Zx8U8hVas4j6qU+SjsmC4PfRiCfxNcOVnycYQ=",
+    "expected": "Independent CipherSplat browser fixture"
+  },
+  {
+    "name": "browser-CS2",
+    "password": "Synthetic independent passphrase!",
+    "data": "TklWT1JBMiEAAACWeyJ2IjoyLCJhbGciOiJBRVMtMjU2LUdDTS1DSFVOS0VEIiwia2RmIjoiUEJLREYyLVNIQS0yNTYiLCJpdGVyIjo2MDAwMDAsImNodW5rU2l6ZSI6NDE5NDMwNCwic2FsdCI6InM1Tlp6a0JtY3I5dVo4WXlNa0lkL2c9PSIsInByZWZpeCI6IkhPc2FsTnlkVno4PSJ9AAAAbAAAAHw+SgxRe3ro+0xAc48LFcRBJ/6CgSAXJsnzUk5e7FAH/sI7JzL4iQVgv8LQsDqW9IJvQoFoiMpinf4lEyCVTixjM5AUn/HuOj5xi/XEf5IrPQvgeuo0L+4gxTqv10/VJKhe8g1odvTryC1mhyOu9zI0wD2DKSwbUsRsnmUeAAAAJwAAADdIyb8pm3/qvxMVDQhSWpjJdP4D5kDKKILKsnKmowUiPUPIRi9JqaJPIRNaNSIrfGTypzeY8w/m",
+    "expected": "Independent CipherSplat browser fixture"
+  },
+  {
+    "name": "browser-CS3",
+    "password": "Synthetic independent passphrase!",
+    "data": "Q1NQQ1MzISEAAACWeyJ2IjozLCJhbGciOiJBRVMtMjU2LUdDTS1DSFVOS0VEIiwia2RmIjoiUEJLREYyLVNIQS0yNTYiLCJpdGVyIjo2MDAwMDAsImNodW5rU2l6ZSI6NDE5NDMwNCwic2FsdCI6InM1Tlp6a0JtY3I5dVo4WXlNa0lkL2c9PSIsInByZWZpeCI6InRZd1J1Z0c5WFNvPSJ9AAAAbAAAAHxlR+fL+F6GwsqF8iyF0tdzFbZVU8XTSvdYFj+dV6QEi53OIhVmdLgv55G4K2hOrstbieDwz3rMFYdEs1nPjhI67BSs7V4rPuvCoJ1XD1FeIkkbxd5FKYwHlOd0hetf+4xnERIU7g25mUqPSg13co0Ht3cpWNOEjoJyfebvAAAAJwAAADe9/baqlVRrskERso3KQHaicQi0gfA3oGlyxjmc9HF181bh1A25OtdwXAiKjpqWzzhMpGyVBaoh",
+    "expected": "Independent CipherSplat browser fixture"
+  }
+]
