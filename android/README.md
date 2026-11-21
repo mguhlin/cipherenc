@@ -48,4 +48,4 @@ The dedicated evaluation keystore and its password are stored outside the reposi
 - [Android: D8 compiler](https://developer.android.com/tools/d8)
 - [Android: APK signing tools](https://developer.android.com/tools/apksigner)
 
-The CipherEnc/CipherSplat application remains AGPL-3.0-or-later. Browser library licenses remain in the packaged web assets and repository notices. Android SDK tooling and platform files retain their own Google/Android terms and are not redistributed in the APK source ZIP.
+The CipherEnc application remains AGPL-3.0-or-later. Browser library licenses remain in the packaged web assets and repository notices. Android SDK tooling and platform files retain their own Google/Android terms and are not redistributed in the APK source ZIP.

@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/mguhlin/drawsplat",
   "commit": "3270f6ca88c92f87e1f9d15e970fb035048cfb03",
-  "component": "solutions/CipherSplat",
-  "app_sha256": "f6f16119220f5964659677a0e1de50abc8abfe95e2fca3ff97b59ad7b37b65c6"
+  "app_sha256": "f6f16119220f5964659677a0e1de50abc8abfe95e2fca3ff97b59ad7b37b65c6",
+  "source_blob": "4d37fd6003009a035edcbcd85d09281c1ec0c3d4"
 }

@@ -106,7 +106,7 @@ func TestLimitsAndKDF(t *testing.T) {
 }
 func TestIndependentLibsodiumFixture(t *testing.T) {
 	var fixture struct{ Password, Package, Data string }
-	b, e := os.ReadFile("reference/CipherSplat/independent-xchacha.json")
+	b, e := os.ReadFile("reference/compatibility/independent-xchacha.json")
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -127,8 +127,8 @@ func TestNativeSelfTest(t *testing.T) {
 		t.Fatal(e)
 	}
 }
-func TestCipherSplatFixtures(t *testing.T) {
-	b, e := os.ReadFile("reference/CipherSplat/browser-fixtures.json")
+func TestCompatibilityFixtures(t *testing.T) {
+	b, e := os.ReadFile("reference/compatibility/browser-fixtures.json")
 	if os.IsNotExist(e) {
 		t.Skip("run scripts/browser-interop.cjs to generate independent browser fixtures")
 	}
@@ -150,7 +150,7 @@ func TestCipherSplatFixtures(t *testing.T) {
 				t.Fatal(e)
 			}
 			if len(files) != 1 || string(files[0].Data) != f.Expected {
-				t.Fatal("CipherSplat compatibility failed")
+				t.Fatal("CipherEnc compatibility failed")
 			}
 		})
 	}

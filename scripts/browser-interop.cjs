@@ -8,7 +8,7 @@ const http=require('node:http');const fs=require('node:fs');const path=require('
  try{
   browser=await chromium.launch();const page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/`);
   const fixtures=await page.evaluate(async()=>{
-   const password='Synthetic independent passphrase!';els.password.value=password;const plain='Independent CipherSplat browser fixture';
+   const password='Synthetic independent passphrase!';els.password.value=password;const plain='Independent CipherEnc browser fixture';
    selectedEntries=[{file:new File([plain],'fixture.txt',{type:'text/plain'}),path:'fixture.txt'}];
    const cs4=await encryptFilesChunked();const text=await encryptData(enc.encode(plain),'text','fixture.txt',[]);
    const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await derive(password,salt);
@@ -26,7 +26,7 @@ const http=require('node:http');const fs=require('node:fs');const path=require('
     extras.push({name:'browser-CS'+format,password,data:b64(packed),expected:plain});
    }
    return [{name:'browser-CS4',password,data:b64(new Uint8Array(await cs4.blob.arrayBuffer())),expected:plain},{name:'browser-text-v3',password,data:b64(text),expected:plain},{name:'browser-text-v2',password,data:b64(concat(aad,cipher)),expected:plain},...extras];
-  });fs.writeFileSync('reference/CipherSplat/browser-fixtures.json',JSON.stringify(fixtures,null,2)+'\n');
+  });fs.writeFileSync('reference/compatibility/browser-fixtures.json',JSON.stringify(fixtures,null,2)+'\n');
   execFileSync('build/CipherEnc-native',['--self-test','/tmp/cipherenc-interop-native'],{stdio:'inherit'});
   const native=fs.readFileSync('/tmp/cipherenc-interop-native/native-cs4.cen');
   const result=await page.evaluate(async bytes=>{els.password.value='Synthetic independent passphrase!';const result=await decryptFilesChunked(new File([new Uint8Array(bytes)],'native.cen'));return {paths:result.files.map(f=>f.path),text:await result.files[0].blob.text()};},[...native]);

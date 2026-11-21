@@ -62,11 +62,11 @@ test('chunked v4 authenticates its header for every record', async ({ page }) =>
     selectedEntries = [{ file: new File([enc.encode('chunk data')], 'audit.txt'), path: 'audit.txt' }];
     const encrypted = await encryptFilesChunked();
     const original = new Uint8Array(await encrypted.blob.arrayBuffer());
-    const opened = await decryptFilesChunked(new File([original], 'audit.ciphersplat'));
+    const opened = await decryptFilesChunked(new File([original], 'audit.cen'));
     const changed = original.slice();
     changed[12 + 5] ^= 1;
     let headerRejected = false;
-    try { await decryptFilesChunked(new File([changed], 'changed.ciphersplat')); }
+    try { await decryptFilesChunked(new File([changed], 'changed.cen')); }
     catch { headerRejected = true; }
     return {
       name: encrypted.name,
@@ -94,7 +94,7 @@ test('chunked v4 rejects ciphertext mutation, truncation, and appended data', as
     };
     const result = {};
     for (const [name, bytes] of Object.entries(variants)) {
-      try { await decryptFilesChunked(new File([bytes], `${name}.ciphersplat`)); result[name] = false; }
+      try { await decryptFilesChunked(new File([bytes], `${name}.cen`)); result[name] = false; }
       catch { result[name] = true; }
     }
     return result;
@@ -156,7 +156,7 @@ test('legacy authenticated PBKDF2 text v2 and chunked v3 remain decryptable', as
       files: [{ path: 'legacy-v3.txt', size: data.length, type: 'text/plain', chunks: 1 }],
     }));
     const packageBytes = concat(MAGIC3, u32(header.length), header, await sealV3(0, metadata), await sealV3(1, data));
-    const chunkOpened = await decryptFilesChunked(new File([packageBytes], 'legacy-v3.ciphersplat'));
+    const chunkOpened = await decryptFilesChunked(new File([packageBytes], 'legacy-v3.cen'));
     return { text: dec.decode(textOpened.data), chunk: await chunkOpened.files[0].blob.text() };
   });
   expect(result).toEqual({ text: 'legacy v2', chunk: 'legacy v3' });

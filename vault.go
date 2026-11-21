@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// CipherSplat CS4/CS3/CS2 and text containers, ported from the upstream app.js.
+// CipherEnc CS4/CS3/CS2 and text containers, ported from the upstream app.js.
 package main
 
 import (
@@ -244,7 +244,7 @@ func sealAES(files []vaultFile, password string) ([]byte, error) {
 }
 func openAES(data []byte, password string) ([]vaultFile, error) {
 	if len(data) < 29 || len(data) > nativeLimit+16<<20 {
-		return nil, errors.New("Invalid or oversized CipherSplat package.")
+		return nil, errors.New("Invalid or oversized CipherEnc package.")
 	}
 	magic := string(data[:8])
 	format := 0
@@ -342,7 +342,7 @@ func openText(data []byte, password string) ([]vaultFile, error) {
 	magic := string(data[:8])
 	version := map[string]int{"NIVORA1!": 1, "CSPTXT2!": 2, "CSPTXT3!": 3}[magic]
 	if version == 0 {
-		return nil, errors.New("Not a CipherEnc or CipherSplat package. OpenPGP is not supported in this native edition.")
+		return nil, errors.New("Not a supported encrypted package. OpenPGP is not supported in this native edition.")
 	}
 	hl := int(binary.BigEndian.Uint32(data[8:12]))
 	if hl < 2 || hl > 4096 || 12+hl+16 >= len(data) {

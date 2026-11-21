@@ -1,6 +1,6 @@
 # CipherEnc
 
-CipherEnc protects files, folders, and text on your own device. Encrypted packages use **`.cen`**. It is based on CipherSplat and keeps its blue, silver, and navy visual identity.
+CipherEnc protects files, folders, and text on your own device. Encrypted packages use **`.cen`**. Its interface uses a blue, silver, and navy palette.
 
 - **Native desktop app:** Windows, Mac, and Linux. A Go application with its own native window, AES-256-GCM and XChaCha20-Poly1305. No browser, internet connection, account, installer, or runtime download is required.
 - **Browser tool:** [Open CipherEnc](https://mguhlin.github.io/cipherenc/encrypt/). Files, folders, and text are processed in browser memory using locally hosted cryptographic assets. Works with modern desktop, Android and iOS browsers, subject to their file-picker and memory limits.
@@ -36,9 +36,9 @@ Passwords cannot be recovered. A `.cen` extension is only a filename ending; aut
 
 **Verify** authenticates a package and discards restored plaintext. It detects alterations and incorrect passwords; it does not identify the sender.
 
-**AES-256-GCM** is the default. The native app uses CipherSplat's CS4 container with Argon2id v1.3, 64 MiB, three passes, one lane, a fresh 128-bit salt, independently authenticated chunks, and encrypted file metadata. It supports up to 10,000 files totaling 256 MiB per package. Empty folders are not recorded. It also reads legacy CS2/CS3 and CipherSplat text v1/v2/v3 containers, including saved PRISMVAULT notes. Native and browser CS4 interoperability is tested in both directions.
+**AES-256-GCM** is the default. The native app uses the CS4 container with Argon2id v1.3, 64 MiB, three passes, one lane, a fresh 128-bit salt, independently authenticated chunks, and encrypted file metadata. It supports up to 10,000 files totaling 256 MiB per package. Empty folders are not recorded. It also reads legacy CS2/CS3 and text v1/v2/v3 containers, including saved PRISMVAULT notes. Native and browser CS4 interoperability is tested in both directions.
 
-**XChaCha20-Poly1305** uses a 256-bit key and a random 192-bit nonce with fixed-cost Argon2id. It supports one file or note up to 16 MiB. Its `.cen` packages use CipherEnc's `CENCX01!` format, which is desktop-only and is not understood by the browser tool, CipherSplat, or Paranoia. The header is authenticated; filename and contents are encrypted. This new container has not had an independent cryptographic audit.
+**XChaCha20-Poly1305** uses a 256-bit key and a random 192-bit nonce with fixed-cost Argon2id. It supports one file or note up to 16 MiB. Its `.cen` packages use CipherEnc's `CENCX01!` format, which is desktop-only and is not understood by the browser tool or Paranoia. The header is authenticated; filename and contents are encrypted. This new container has not had an independent cryptographic audit.
 
 **OpenPGP** is available in the browser and Android editions through the pinned local OpenPGP.js library. The native Go desktop edition does not include OpenPGP. Check recipient fingerprints independently; integrity verification is not signature verification.
 
@@ -65,12 +65,12 @@ School use requires the institution's own review for intended ages, data and dev
 | Path | Responsibility |
 | --- | --- |
 | `main.go`, `gui.go` | Native launch, controls, operation lifecycle and deliberate save actions |
-| `vault.go`, `crypto.go` | CipherSplat-compatible AES containers and the separate XChaCha20 container |
+| `vault.go`, `crypto.go` | CS4-compatible AES containers and the separate XChaCha20 container |
 | `vault_test.go`, `selftest.go` | Synthetic round trips, limits, denied cases, restoration and executable self-check |
 | `docs/` | GitHub Pages site, real screenshots, artwork, comic and browser tool |
 | `android/` | Offline Android container, SDK build script and evaluation limitations |
 | `scripts/` | Native builds, compatibility fixtures and validation helpers |
-| `reference/` | Imported CipherSplat evidence and independent compatibility fixtures |
+| `reference/` | Imported engine references and independent compatibility fixtures |
 | `dist/` | Organized executable distribution; excluded from Git |
 | `vendor/` | Local offline build dependencies; excluded from Git and included in the release source ZIP |
 
@@ -92,4 +92,4 @@ Browser development checks use pinned Playwright/axe-core dependencies: `npm ci 
 
 ## License and provenance
 
-CipherEnc and incorporated CipherSplat code are AGPL-3.0-or-later. See `LICENSE`, `UPSTREAM-LICENSE`, `UPSTREAM-NOTICE.md`, `THIRD-PARTY-NOTICES.md`, and `upstream.json`. Keep third-party license notices with redistribution. Corresponding application source, browser dependencies, and vendored Go dependency source are supplied in the release source archive. User files, notes, keys and outputs remain the user's property.
+CipherEnc and its incorporated engine code are AGPL-3.0-or-later. See `LICENSE`, `UPSTREAM-LICENSE`, `UPSTREAM-NOTICE.md`, `THIRD-PARTY-NOTICES.md`, and `upstream.json`. Keep third-party license notices with redistribution. Corresponding application source, browser dependencies, and vendored Go dependency source are supplied in the release source archive. User files, notes, keys and outputs remain the user's property.

@@ -12,11 +12,11 @@ Open `http://127.0.0.1:8941/`. On production, HTTPS supplies the secure context 
 
 ## Browser workspace
 
-The workspace adapts the CipherSplat snapshot recorded in the repository's `upstream.json`, retaining its AES-GCM/Argon2id formats, legacy readers, file/folder/text workflow, optional OpenPGP keys, password generator, and nonpersistent language control. Changes include CipherEnc branding, `.cen` download suffixes, local navigation, readable helper/control colors, bounded UI operation state, explicit clear, stale-directory-import invalidation, and save/clipboard failure messages. No API endpoint, content upload, telemetry, or native XChaCha20 bridge is included.
+The workspace adapts the imported engine snapshot recorded in the repository's `upstream.json`, retaining its AES-GCM/Argon2id formats, legacy readers, file/folder/text workflow, optional OpenPGP keys, password generator, and nonpersistent language control. Changes include CipherEnc branding, `.cen` download suffixes, local navigation, readable helper/control colors, bounded UI operation state, explicit clear, stale-directory-import invalidation, and save/clipboard failure messages. No API endpoint, content upload, telemetry, or native XChaCha20 bridge is included.
 
 `encrypt/integrity.json` records SHA-256 hashes of shipped files other than the hash document itself. Update those hashes after changing a browser asset. If `app.js` changes, update its SHA-384 `integrity` value in `encrypt/index.html` too. Do not change the upstream crypto bundles without reviewing their licenses, versions, and compatibility.
 
-The `.cen` filename ending does not distinguish AES, OpenPGP, or native-app XChaCha20 packages. The browser reads supported CipherSplat-compatible password formats; native XChaCha20 packages require the native desktop app.
+The `.cen` filename ending does not distinguish AES, OpenPGP, or native-app XChaCha20 packages. The browser reads supported password formats; native XChaCha20 packages require the native desktop app.
 
 ## Mobile limits
 
@@ -26,6 +26,6 @@ Desktop Chromium/Firefox/WebKit and emulated Pixel 5/iPhone 13 browser profiles 
 
 ## Design and review
 
-The page follows VCC's function-first approach: show the browser action and platform downloads early, explain the reversible password/package workflow with an accessible three-panel comic, show actual app captures, and separate format facts from certification claims. The palette preserves CipherSplat blue, silver, and navy. Web design, SecureVCC, education privacy, and Rescue guidance inform the implementation; these are engineering checks, not security/accessibility/legal certifications.
+The page follows VCC's function-first approach: show the browser action and platform downloads early, explain the reversible password/package workflow with an accessible three-panel comic, show actual app captures, and separate format facts from certification claims. The palette uses blue, silver, and navy. Web design, SecureVCC, education privacy, and Rescue guidance inform the implementation; these are engineering checks, not security/accessibility/legal certifications.
 
 Avoid visitor-facing maintenance timestamps in source, templates, generated metadata, and downloads. Image captions describe what was captured, not when it was captured. Keep generated-image prompts and provenance with project development notes rather than embedding a date in the public page.
