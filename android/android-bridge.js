@@ -70,7 +70,8 @@
     savedControls = [...document.querySelectorAll('button,input,textarea,select')].map(control => ({control, disabled:control.disabled}));
     savedControls.forEach(({control}) => { control.disabled = true; });
     try {
-      if (resultFiles.length) {
+      if (resultFiles.length || resultDirectories.length) {
+        if (resultDirectories.length && !resultFiles.length) throw Error('This archive contains only empty folders. Restore it with the desktop app.');
         const total = resultFiles.reduce((sum, file) => sum + file.blob.size, 0);
         if (total > MAX_INPUT || resultFiles.length > 1000) throw Error('Restored folder exceeds the Android evaluation limit.');
         const files = [];

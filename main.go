@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-const version = "1.1.0"
+const version = "1.1.1"
 
 func main() {
 	showVersion := flag.Bool("version", false, "print version")

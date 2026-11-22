@@ -79,6 +79,7 @@ async function encryptCompressedFiles(){
  if(!count||count>10000)throw Error('Choose between 1 and 10,000 files.');
  const total=entries.reduce((n,e)=>n+e.file.size,0);
  if(total>256*1048576)throw Error('Choose at most 256 MiB per compressed archive.');
+ validateRestoreTree(entries.map(entry=>({path:entry.path,dir:false,size:entry.file.size})));
  const zip=new JSZip(),seen=new Set();
  for(const entry of entries){
   const path=zipPath(entry.path),key=path.toLowerCase();
@@ -89,30 +90,44 @@ async function encryptCompressedFiles(){
  const compressed=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6},streamFiles:true});
  if(compressed.size>256*1048576)throw Error('The ZIP exceeds the 256 MiB archive limit.');
  const base=count===1&&!entries[0].path.includes('/')?entries[0].file.name:entries[0].path.split('/')[0];
- const name=base.slice(0,200)+'.zip',file=new File([compressed],name,{type:ZIP_MEDIA_TYPE});
+ let short='';for(const ch of base){if(enc.encode(short+ch).length>210)break;short+=ch}short=short||'archive';
+ const name=short+'.zip',file=new File([compressed],name,{type:ZIP_MEDIA_TYPE});
  const packed=await encryptFilesChunked([{path:name,file}]);
  progress(98,'Verifying encrypted archive');
  const checked=await decryptFilesChunked(new File([packed.blob],'verify.cen'));
  const expected=new Uint8Array(await crypto.subtle.digest('SHA-256',await compressed.arrayBuffer()));
  const actual=checked.files.length===1?new Uint8Array(await crypto.subtle.digest('SHA-256',await checked.files[0].blob.arrayBuffer())):new Uint8Array();
  if(!equalBytes(expected,actual))throw Error('Encryption verification failed. No download was started.');
- return {...packed,name:base.slice(0,200)+'.cen',count};
+ return {...packed,name:short+'.cen',count};
 }
 async function runAndSave(){
  const encrypting=operation==='encrypt',inputMode=mode;
  if(window.CipherEncAndroid){const total=mode==='text'?enc.encode(els.text.value).length:selectedEntries.reduce((n,e)=>n+e.file.size,0);if(total>(encrypting?16:24)*1048576||selectedEntries.length>1000){els.error.textContent='Android evaluation limit: 16 MiB to encrypt, 24 MiB encrypted input, and 1,000 files.';return}}
- let handle=null;
- if(encrypting&&typeof window.showSaveFilePicker==='function'&&!window.CipherEncAndroid){
+ let handle=null,restoreParent=null;
+ if(encrypting&&inputMode==='file'&&typeof window.showSaveFilePicker==='function'&&!window.CipherEncAndroid){
   const base=inputMode==='text'?(cryptoMethod==='openpgp'?'encrypted-message':'encrypted-note'):selectedEntries[0]?.path.split('/')[0]||'encrypted';
   try{handle=await window.showSaveFilePicker({suggestedName:base+'.cen',types:[{description:'CipherEnc encrypted file',accept:{'application/octet-stream':['.cen']}}]})}
   catch(error){if(error.name==='AbortError'){$('#statusCopy').textContent='Save cancelled. Your input is still ready; no encryption was started.';return}}
  }
+ if(!encrypting&&inputMode==='file'&&typeof window.showDirectoryPicker==='function'&&!window.CipherEncAndroid){
+  try{restoreParent=await window.showDirectoryPicker({mode:'readwrite'})}catch(error){if(error.name==='AbortError'){$('#statusCopy').textContent='Restoration cancelled. Your encrypted input is still ready.';return}}
+ }
  await runRequested();
  if(!resultBlob||els.result.classList.contains('hidden'))return;
- if(!encrypting&&inputMode==='text'){
-  $('#textResult').value=resultText||await resultBlob.text();$('#textResultArea').classList.remove('hidden');return;
+ if(!encrypting){try{await unpackZipResult()}catch(error){resetResult();els.error.textContent=error.message;return}}
+ if(resultText||inputMode==='text'){
+  $('#textResult').value=resultText||await resultBlob.text();$('#textResultLabel').textContent=encrypting?'Encrypted text — copy or save as .cen':'Decrypted text';$('#textResultArea').classList.remove('hidden');$('#copyResult').textContent=encrypting?'Copy encrypted text':'Copy decrypted text';$('#copyResult').classList.remove('hidden');$('#textResultArea').scrollIntoView({block:'center',behavior:'auto'});$('#textResult').focus({preventScroll:true});
+  if(!encrypting&&inputMode==='text')return;
  }
  try{
+  if(!encrypting&&(resultFiles.length||resultDirectories.length)){
+   if(restoreParent){await restoreToDirectory(restoreParent);$('#downloadResult').textContent='Restore another copy';return}
+   if(typeof window.CipherEncAndroidSave==='function'){await window.CipherEncAndroidSave();return}
+   showRestoredFileList();return;
+  }
+  if(!encrypting&&restoreParent){
+   resultFiles=[{path:zipPath(resultName),blob:resultBlob}];await restoreToDirectory(restoreParent);$('#downloadResult').textContent='Restore another copy';return;
+  }
   if(handle){
    const writable=await handle.createWritable();
    try{await writable.write(resultBlob);await writable.close()}catch(error){try{await writable.abort()}catch{};throw error}
@@ -121,7 +136,7 @@ async function runAndSave(){
    await window.CipherEncAndroidSave();
   }else{
    await downloadResult(true);
-   $('#statusCopy').textContent=encrypting?'Verified encrypted file sent to your browser’s downloads. Your browser controls the save location.':'Authenticated result sent to your browser’s downloads. The restored ZIP is unencrypted.';
+   $('#statusCopy').textContent=encrypting?'Verified encrypted file sent to your browser’s downloads. Your browser controls the save location.':'Your original file was authenticated, unzipped and sent to your browser’s downloads.';
   }
   $('#downloadResult').textContent='Save another copy';
  }catch(error){els.error.textContent='Saving did not finish: '+error.message+'. Your result is still available. Choose Save result to try again.';$('#downloadResult').textContent='Save result'}

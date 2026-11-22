@@ -61,12 +61,27 @@ func sourceInventory(root *os.Root, name string) ([]sourceEntry, error) {
 			return errors.New("Two filenames differ only by letter case. Rename one before encrypting for portable restoration.")
 		}
 		seen[key] = true
-		info, err := d.Info()
+		info, err := root.Lstat(filepath.FromSlash(path))
 		if err != nil {
 			return err
 		}
 		if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() && !info.Mode().IsRegular() {
 			return fmt.Errorf("Only regular files and folders are supported: %s", path)
+		}
+		handle, err := root.Open(filepath.FromSlash(path))
+		if err != nil {
+			return err
+		}
+		info, err = handle.Stat()
+		closeErr := handle.Close()
+		if err != nil {
+			return err
+		}
+		if closeErr != nil {
+			return closeErr
+		}
+		if !info.IsDir() && !info.Mode().IsRegular() {
+			return fmt.Errorf("A selected entry changed type: %s", path)
 		}
 		if !info.IsDir() {
 			total += info.Size()
@@ -99,7 +114,7 @@ func readSource(root *os.Root, entry sourceEntry) ([]byte, error) {
 	return data, err
 }
 func sameSource(a, b fs.FileInfo) bool {
-	return os.SameFile(a, b) && a.Mode() == b.Mode() && a.Size() == b.Size() && a.ModTime().Equal(b.ModTime())
+	return os.SameFile(a, b) && a.Mode() == b.Mode() && (a.IsDir() || a.Size() == b.Size() && a.ModTime().Equal(b.ModTime()))
 }
 
 // archiveSource keeps plaintext ZIP bytes in memory only, including empty directories.
@@ -304,7 +319,7 @@ func (p *archivePlan) shred(password string) error {
 	for i, e := range current {
 		old := p.entries[i]
 		if e.name != old.name || !sameSource(e.info, old.info) {
-			return errors.New("An original changed; nothing was shredded.")
+			return fmt.Errorf("Original changed (%s); nothing was shredded.", e.name)
 		}
 		if !e.info.IsDir() {
 			f, err := p.root.Open(filepath.FromSlash(e.name))

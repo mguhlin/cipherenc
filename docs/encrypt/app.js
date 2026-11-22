@@ -1,10 +1,10 @@
 if(window.trustedTypes?.createPolicy){try{trustedTypes.createPolicy('default',{createScriptURL:value=>{if(value==='argon2-worker.js')return value;throw new TypeError('Blocked script URL: '+value)},createHTML:()=>{throw new TypeError('HTML injection is blocked in CipherEnc.')},createScript:()=>{throw new TypeError('Dynamic script evaluation is blocked in CipherEnc.')}})}catch{}}
-const $=s=>document.querySelector(s),enc=new TextEncoder(),dec=new TextDecoder(),APP_VERSION='1.1.0',PACKAGE_EXTENSION='.cen',MAGIC=enc.encode('NIVORA1!'),MAGIC_TEXT2=enc.encode('CSPTXT2!'),MAGIC_TEXT3=enc.encode('CSPTXT3!'),ITERATIONS=600000;
+const $=s=>document.querySelector(s),enc=new TextEncoder(),dec=new TextDecoder(),APP_VERSION='1.1.1',PACKAGE_EXTENSION='.cen',MAGIC=enc.encode('NIVORA1!'),MAGIC_TEXT2=enc.encode('CSPTXT2!'),MAGIC_TEXT3=enc.encode('CSPTXT3!'),ITERATIONS=600000;
 const ARGON2_MEMORY=65536,ARGON2_ITERATIONS=3,ARGON2_PARALLELISM=1,ARGON2_KEY_LENGTH=32;
 let selectionEpoch=0;
-let mode='file',operation='encrypt',cryptoMethod='password',selectedEntries=[],resultBlob=null,resultName='',resultText='',resultFiles=[],pgpKeyBinary=null;
+let mode='file',operation='encrypt',cryptoMethod='password',selectedEntries=[],resultBlob=null,resultName='',resultText='',resultFiles=[],resultDirectories=[],pgpKeyBinary=null;
 const els={fileInput:$('#fileInput'),folderInput:$('#folderInput'),drop:$('#dropZone'),fileCard:$('#fileCard'),text:$('#textInput'),password:$('#password'),run:$('#runButton'),error:$('#errorMessage'),result:$('#resultPanel')};
-function setOperation(next){operation=next;$('#dropTitle').textContent='Drop files or folders here';$('#dropSub').textContent='Originals are zipped and encrypted. Encrypted packages are unlocked.';$('#chooseFolder').classList.toggle('hidden',cryptoMethod==='openpgp');els.fileInput.multiple=true;syncCredentialPanel();resetResult();sync()}
+function setOperation(next){operation=next;$('#dropTitle').textContent='2a) Drop files or folders here';$('#dropSub').textContent='Originals are zipped and encrypted. Encrypted packages are unlocked.';$('#chooseFolder').classList.toggle('hidden',cryptoMethod==='openpgp');els.fileInput.multiple=true;syncCredentialPanel();resetResult();sync()}
 function setCryptoMethod(next){cryptoMethod=next;if($('#protectionMethod'))$('#protectionMethod').value=next;document.querySelectorAll('.method').forEach(button=>{const active=button.dataset.method===next;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active)});$('#passwordCredentials').classList.toggle('hidden',next!=='password');$('#pgpCredentials').classList.toggle('hidden',next!=='openpgp');const pgp=next==='openpgp';$('#algorithmLabel').textContent=pgp?'OpenPGP message':'AES-256-GCM';$('#algorithmCopy').textContent=pgp?'Recipient-key encryption + integrity':'Authenticated encryption';$('#keyMethodLabel').textContent=pgp?'OpenPGP.js 6.3.1':'Argon2id v1.3';$('#keyMethodCopy').textContent=pgp?'Pinned local dependency':'64 MiB · 3 passes';clearPgpCredentials();setOperation(operation)}
 els.fileInput.addEventListener('change',()=>setEntries([...els.fileInput.files].map(file=>({file,path:file.name}))));
 els.folderInput.addEventListener('change',()=>setEntries([...els.folderInput.files].map(file=>({file,path:file.webkitRelativePath||file.name}))));
@@ -20,7 +20,7 @@ $('#showPassword').addEventListener('click',e=>{const showing=els.password.type=
 $('#generatePassword').addEventListener('click',openPasswordGenerator);
 els.run.addEventListener('click',runRequested);
 $('#downloadResult').addEventListener('click',()=>downloadResult().catch(error=>{els.error.textContent=error.message||'The result could not be saved. Try again.'}));
-$('#copyResult').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(resultText);$('#copyResult').textContent='Copied ✓';setTimeout(()=>$('#copyResult').textContent='Copy result',1600)}catch{els.error.textContent='Clipboard access was blocked. Download the result instead.'}});
+$('#copyResult').addEventListener('click',async()=>{const button=$('#copyResult'),label=button.textContent,value=resultText||$('#textResult').value;try{if(!navigator.clipboard?.writeText)throw Error('Clipboard unavailable');await navigator.clipboard.writeText(value);button.textContent='Copied ✓';setTimeout(()=>{if(button.textContent==='Copied ✓')button.textContent=label},1600)}catch{$('#textResult').focus();$('#textResult').select();els.error.textContent='Text selected. Press Ctrl+C or Command+C, or touch and hold to copy.'}});
 function clearSelection(){selectionEpoch++;selectedEntries=[];els.fileInput.value='';els.folderInput.value='';els.fileCard.classList.add('hidden');els.drop.classList.remove('hidden')}
 function setEntries(entries){return autoSelectEntries(entries)}
 function storeEntries(entries){if(!entries.length)return;if((operation!=='encrypt'||cryptoMethod==='openpgp')&&entries.length>1){els.error.textContent='Choose one encrypted package or file for this operation.';return}selectedEntries=entries;const folder=entries.length>1||entries[0].path.includes('/'),total=entries.reduce((n,e)=>n+e.file.size,0);$('#fileName').textContent=folder?`${entries[0].path.split('/')[0]} · ${entries.length} files`:entries[0].file.name;$('#fileSize').textContent=`${formatBytes(total)}${folder?' · recursive package':''}`;els.drop.classList.remove('hidden');els.fileCard.classList.remove('hidden');resetResult();sync()}
@@ -32,7 +32,7 @@ function progress(n,stage){$('#inputIntent').textContent=stage;$('#progressTrack
 function setStatusChip(label,state=''){const chip=$('#statusChip');chip.textContent=label;chip.className=`status-chip ${state}`.trim()}
 function setWorking(){els.error.textContent='';els.run.disabled=true;$('.status-panel').setAttribute('aria-busy','true');setStatusChip('PROCESSING','processing');$('#statusTitle').textContent=operation==='encrypt'?'Building your vault…':'Verifying your vault…';$('#statusCopy').textContent='Key material exists only in this browser tab.'}
 function resetStatus(){progress(0,'Waiting for input');$('.status-panel').setAttribute('aria-busy','false');setStatusChip('READY');$('#statusTitle').textContent='Vault standing by';$('#statusCopy').textContent='Select a file or enter text to begin. All processing stays within this tab.'}
-function resetResult(){$('#textResultArea').classList.add('hidden');$('#textResult').value='';els.result.classList.add('hidden');resultBlob=null;resultText='';resultFiles=[];$('#downloadResult').textContent='Download result ↓';$('#downloadResult').classList.remove('hidden');resetStatus()}
+function resetResult(){$('#restoredFilesArea').classList.add('hidden');$('#restoredFilesList').replaceChildren();$('#textResultArea').classList.add('hidden');$('#textResult').value='';els.result.classList.add('hidden');resultBlob=null;resultText='';resultFiles=[];resultDirectories=[];$('#downloadResult').textContent='Download result ↓';$('#downloadResult').classList.remove('hidden');resetStatus()}
 function concat(...arrays){const out=new Uint8Array(arrays.reduce((n,a)=>n+a.length,0));let off=0;for(const a of arrays){out.set(a,off);off+=a.length}return out}
 function u32(n){const a=new Uint8Array(4);new DataView(a.buffer).setUint32(0,n);return a}
 async function derive(password,salt,iterations=ITERATIONS){const material=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
@@ -57,28 +57,21 @@ function zipPath(path){
  const normalized=path.split(String.fromCharCode(92)).join('/');
  const badCharacter=[...normalized].some(char=>char.charCodeAt(0)<32||char.charCodeAt(0)===127||'<>:"|?*'.includes(char));
  const badPart=normalized.split('/').some(part=>part.endsWith('.')||part.endsWith(' ')||/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(part.split('.')[0]));
- if(!safePath(normalized)||badCharacter||badPart)throw Error('A folder filename cannot be restored safely across devices. Use the native app, or rename the original item and encrypt again.');
+ if(!safePath(normalized)||enc.encode(normalized).length>4096||normalized.split('/').some(part=>enc.encode(part).length>255)||badCharacter||badPart)throw Error('A folder filename cannot be restored safely across devices. Use the native app, or rename the original item and encrypt again.');
  return normalized;
 }
 async function downloadResult(forceZIP=false){
- if(resultFiles.length){
-  const files=resultFiles.slice();
+ if(resultFiles.length||resultDirectories.length){
   if(!forceZIP&&typeof window.showDirectoryPicker==='function'){
-   if(!confirm('Restore into a new or empty folder when possible. Existing files with matching names will be overwritten. Continue?'))return;
-   let root;try{root=await window.showDirectoryPicker({mode:'readwrite'})}catch(error){if(error.name!=='AbortError')throw Error('The destination folder could not be opened.');return}
-   for(const item of files){if(!safePath(item.path))throw Error('Unsafe restoration path was blocked.');const parts=item.path.split('/');let dir=root;for(const part of parts.slice(0,-1))dir=await dir.getDirectoryHandle(part,{create:true});const handle=await dir.getFileHandle(parts.at(-1),{create:true}),writer=await handle.createWritable();try{await writer.write(item.blob);await writer.close()}catch(error){await writer.abort().catch(()=>{});throw error}}
-   $('#downloadResult').textContent='Folder restored ✓';
-  }else{
-   if(!window.JSZip)throw Error('The local ZIP helper is unavailable. Reload the workspace and try again.');
-   const zip=new JSZip(),seen=new Set();
-   for(const item of files){const path=zipPath(item.path),identity=path.normalize('NFC').toLowerCase();if(seen.has(identity))throw Error('Duplicate folder paths were found. No ZIP was created.');seen.add(identity);zip.file(path,item.blob)}
-   $('#downloadResult').textContent='Preparing restored ZIP…';
-   const blob=await zip.generateAsync({type:'blob',compression:'STORE',streamFiles:true});
-   downloadBlob(blob,'CipherEnc-restored.zip');$('#downloadResult').textContent='Download restored ZIP';
+   let parent;try{parent=await window.showDirectoryPicker({mode:'readwrite'})}catch(error){if(error.name==='AbortError')return;throw error}
+   await restoreToDirectory(parent);return;
   }
-  return;
+  const zip=new JSZip();validateRestoreTree([...resultDirectories.map(path=>({path,dir:true,size:0})),...resultFiles.map(file=>({...file,dir:false,size:file.blob.size}))]);
+  for(const path of resultDirectories)zip.folder(path);
+  for(const item of resultFiles)zip.file(zipPath(item.path),item.blob);
+  const blob=await zip.generateAsync({type:'blob',compression:'STORE',streamFiles:true});downloadBlob(blob,'CipherEnc-restored.zip');return;
  }
- downloadBlob(resultBlob,resultName);
+ if(resultBlob)downloadBlob(resultBlob,resultName);
 }
 async function getOpenPgp(){if(!window.openpgp)throw Error('The pinned OpenPGP engine did not load. Verify the application files against integrity.json.');return window.openpgp}
 function syncCredentialPanel(){if(cryptoMethod!=='openpgp')return;const encrypting=operation==='encrypt';$('#pgpKeyLabel').textContent=encrypting?'Recipient public key':'Recipient private key';$('#pgpKeyInput').placeholder=encrypting?'Paste an ASCII-armored OpenPGP public key':'Paste an ASCII-armored OpenPGP private key';$('#pgpPassphraseRow').classList.toggle('hidden',encrypting);$('#pgpKeyStatus').textContent=encrypting?'The public key identifies who can decrypt. It is not uploaded or saved.':'The private key and passphrase stay in memory only and are cleared after this operation.'}

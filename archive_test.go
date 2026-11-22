@@ -67,6 +67,14 @@ func TestAdjacentArchiveRestoreAndShred(t *testing.T) {
 		held.Close()
 	}
 	if err = p.shred(testPassword); err != nil {
+		current, _ := sourceInventory(p.root, filepath.ToSlash(filepath.Base(p.source)))
+		for i, e := range current {
+			if i >= len(p.entries) {
+				break
+			}
+			old := p.entries[i]
+			t.Logf("source %s: directory=%t identity=%t mode=%t size=%d/%d modtime_delta=%v", e.name, e.info.IsDir(), os.SameFile(old.info, e.info), old.info.Mode() == e.info.Mode(), old.info.Size(), e.info.Size(), e.info.ModTime().Sub(old.info.ModTime()))
+		}
 		t.Fatal(err)
 	}
 	if _, err = os.Stat(source); !os.IsNotExist(err) {

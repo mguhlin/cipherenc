@@ -31,7 +31,7 @@ for goos,arch,platform,kind,label in targets:
  if goos=='darwin':
   contents=folder/'CipherEnc.app'/'Contents';(contents/'MacOS').mkdir(parents=True,exist_ok=True);(contents/'Resources').mkdir(exist_ok=True)
   executable=contents/'MacOS'/'CipherEnc'
-  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':'1.1.0','CFBundleShortVersionString':'1.1.0','CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
+  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':'1.1.1','CFBundleShortVersionString':'1.1.1','CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
   (contents/'Info.plist').write_bytes(plistlib.dumps(info));(contents/'PkgInfo').write_bytes(b'APPL????')
   for name in docs+notices:shutil.copy2(root/name,contents/'Resources'/name)
  if not args.package_only:
@@ -40,7 +40,7 @@ for goos,arch,platform,kind,label in targets:
   subprocess.run(['go','build','-mod=vendor','-trimpath','-buildvcs=false','-ldflags',flags,'-o',str(executable),'.'],cwd=root,env=env,check=True)
  if not executable.is_file():raise SystemExit('Missing native executable: '+str(executable))
  executable.chmod(0o755)
- archive=downloads/f'CipherEnc-1.1.0-{label}.zip'
+ archive=downloads/f'CipherEnc-1.1.1-{label}.zip'
  with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
   package=Path(f'CipherEnc-{label}')
   for p in sorted(folder.rglob('*')):
@@ -57,7 +57,7 @@ guides={
  'Linux':'Most Linux desktops: open x64, then run CipherEnc.\nARM64 Linux: use ARM64/CipherEnc instead.\nYou can also use Start CipherEnc.desktop on this x64 computer.\nA normal graphical Linux desktop with X11/XWayland libraries is required.\nNo browser or internet connection is required.\n'
 }
 for platform,text in guides.items():(out/platform/'START HERE.txt').write_text('CipherEnc — '+platform+'\n\n'+text+'\nRead ../Support/README.md for help.\n')
-shutil.copy2(root/'docs/encrypt/assets/tools.svg',support/'CipherEnc.svg')
+shutil.copy2(root/'docs/encrypt/assets/cipherenc-mark.svg',support/'CipherEnc.svg')
 launcher=out/'Linux'/'Start CipherEnc.desktop'
 launcher.write_text(f'[Desktop Entry]\nType=Application\nName=CipherEnc\nComment=Native offline encryption\nExec="{out}/Linux/x64/CipherEnc"\nIcon={support}/CipherEnc.svg\nTerminal=false\nCategories=Utility;Security;\n');launcher.chmod(0o755)
 
@@ -65,7 +65,7 @@ apk=root/'android/build/CipherEnc-Android-evaluation.apk'
 if apk.is_file():
  (out/'Android').mkdir(exist_ok=True);shutil.copy2(apk,out/'Android'/'CipherEnc.apk');copy=downloads/apk.name;shutil.copy2(apk,copy);archives.append(copy)
  (out/'Android'/'START HERE.txt').write_text('CipherEnc Android evaluation APK\n\nInstall CipherEnc.apk only if your device policy permits sideloading.\nThis development-signed Android app bundles the browser tool inside the OS WebView.\nIt uses no external browser and requests no INTERNET permission.\nIt is not the native Go desktop app. Physical Android-device testing remains pending.\n')
-source=downloads/'CipherEnc-1.1.0-source.zip'
+source=downloads/'CipherEnc-1.1.1-source.zip'
 with zipfile.ZipFile(source,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in sorted(root.rglob('*')):
   if not p.is_file():continue

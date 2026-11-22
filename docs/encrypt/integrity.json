@@ -2,14 +2,14 @@
   "sha256": {
     "app-language.css": "dbf94be48a864912bc2283c491741966a04a761f4a474ff19388ac9fcff2549f",
     "app-language.js": "7a3767648811463318bcc2c4375ffa3edb128fce086fca957351c2eb93b9a481",
-    "app.js": "a85c6a6760fa44bed53237544311ea8d662bd22cbdaf7a8a98e5091a40414f9a",
+    "app.js": "90522ed92fd53567c897a6e00977ab074d2899f2d9d39577e2753e297173ed95",
     "argon2-worker.js": "e8e1a5499c2548bf32f8e1c76b0a8b8d3bf100e83316376b4c68e18d35dc7466",
     "assets/cipherenc-workspace-hero.png": "7933236ff1528d1f0c1111a4645efa08ddab604fcf94ede033e4241c49d8dae9",
     "assets/drawsplat-logo.png": "2b8132b94621190e5b900a7c6034f925eb6cd292d1ad4117d2f5ed4596eb5208",
     "assets/tools.svg": "0322b0e7ecbf5750bf478051523f885aecc4709c77a5d72705104d0aec1c3008",
-    "browser.css": "5c6a0f1aff0ada79d5cf9d8eae6a25168b3df49ad16130d70aa0b1e23d96b537",
-    "browser.js": "be36d0ce204c591dfb467a1abf542ea933ffe780072c610f719b5ee0794b74ec",
-    "index.html": "7d45a58674213c54f60710c46a4d7ea4de52514df05505fb786ae5b40d00ae41",
+    "browser.css": "1d91728c4d416c0a88139b71c2a9af8b31b8aacdaf4484556aec994eecbd8a34",
+    "browser.js": "72cfbae98d9298679779f0c3dc86888b056067934ae710972c32f759aabef9e6",
+    "index.html": "ac975667787f4691bdf7c51b538e9bf237828687da35cba80eba758aa86a1ccc",
     "mobile.css": "63d50281cbb7b735ccf6b57770b08be4e9e4b3cbafb6b7e040b35be11d667b85",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "abcc0a5b320794a93efd1d13dadb6bb41eab0c9234554132893cbcebee00d348",
@@ -22,6 +22,8 @@
     "vendor/openpgp/GPL-3.0.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
     "vendor/openpgp/LICENSE": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
     "vendor/openpgp/openpgp.min.js": "9736f49e81790af972029cd8416a8f9e5be7c4bddfb041676ab93fcad8332f5e",
-    "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb"
+    "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb",
+    "assets/cipherenc-mark.svg": "234fbc6f6f5b7c3ecd31f5e2781acab2ec8f1cadb565a6d75de7798986895df3",
+    "restore.js": "f7b07cbb5ba1431a05d7da69f73664b58ef9298dade128a31d9e5073d1492d72"
   }
 }

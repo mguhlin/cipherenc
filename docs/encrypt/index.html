@@ -7,7 +7,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self'; require-trusted-types-for 'script'; trusted-types default">
   <title>CipherEnc — Encrypt in your browser</title>
-  <link rel="icon" href="assets/tools.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/cipherenc-mark.svg" type="image/svg+xml">
   <meta name="theme-color" content="#1769e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,7 +23,7 @@
 <body>
   <a class="skip-link" href="#workspace">Skip to secure workspace</a>
 
-  <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><span class="brand-mark" aria-hidden="true"><span></span></span><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="#browser-help">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
+  <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><img class="brand-symbol" src="assets/cipherenc-mark.svg" alt="" width="40" height="45"><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="#browser-help">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
   <main>
     <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2>
       <div class="app-shell">
@@ -32,20 +32,22 @@
 
             <div id="passwordCredentials">
               <div class="password-row">
-                <label class="field-label" for="password">Vault password</label>
+                <label class="field-label step-heading" for="password"><span class="step-number">1</span> Vault password</label>
                 <button id="generatePassword" class="mini-action" type="button">Generate a password</button>
               </div>
+              <p class="step-hint">Set your password here. Use the same password to unlock an encrypted result.</p>
               <div class="password-wrap"><input id="password" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Use a long, unique passphrase"><button id="showPassword" type="button" aria-label="Show password" aria-pressed="false">◉</button></div>
               <div class="strength strength-0"><div><i id="strengthBar"></i></div><span id="strengthText">ENTER A PASSWORD</span></div>
               <p class="password-note">Save this password safely. Files are ZIP-compressed before encryption. Originals stay untouched in the browser.</p>
             </div>
 
+            <h3 class="step-heading"><span class="step-number">2</span> Content to protect or unlock</h3><p class="step-hint">Choose files/folders or text. CipherEnc detects what to do automatically.</p>
             <div id="fileInputArea">
               <div id="dropZone" class="drop-zone" aria-label="File and folder drop area">
                 <input id="fileInput" type="file" multiple hidden>
                 <input id="folderInput" type="file" webkitdirectory directory multiple hidden>
-                <span class="upload-icon">↥</span>
-                <strong id="dropTitle">Drop files or folders here</strong>
+                <img class="drop-brand-mark" src="assets/cipherenc-mark.svg" alt="" width="64" height="72">
+                <strong id="dropTitle">2a) Drop files or folders here</strong>
                 <small id="dropSub">Originals are zipped and encrypted. Encrypted packages are unlocked.</small>
                 <span class="picker-actions"><button id="chooseFiles" type="button">Choose files</button><button id="chooseFolder" type="button">Choose folder</button></span>
               </div>
@@ -53,7 +55,7 @@
             </div>
 
             <div id="textInputArea">
-              <label class="field-label" for="textInput">Or type or paste text</label>
+              <label class="field-label" for="textInput">2b) Type or paste text</label>
               <textarea id="textInput" placeholder="Type a private note, or paste an encrypted text package…" spellcheck="false"></textarea>
               <div class="char-count"><span id="charCount">0</span> characters</div>
             </div>
@@ -70,6 +72,7 @@
             </details>
 
             <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
+            <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span> Get your result</h3><p class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .cen file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
             <p id="inputIntent" class="password-note" role="status">Add originals to encrypt, or an encrypted package to unlock.</p>
             <p id="errorMessage" class="error" role="alert"></p>
           </div>
@@ -79,7 +82,8 @@
 
         <div id="resultPanel" class="result-panel hidden" role="status" aria-live="polite" tabindex="-1">
           <div class="result-badge">✓</div><div><span class="kicker">VAULT OPERATION COMPLETE</span><h3 id="resultTitle">Encryption complete</h3><p id="resultMeta"></p></div>
-          <div id="textResultArea" class="hidden"><label for="textResult">Unlocked text</label><textarea id="textResult" readonly spellcheck="false"></textarea></div>
+          <div id="textResultArea" class="hidden"><label id="textResultLabel" for="textResult">Text result</label><textarea id="textResult" readonly spellcheck="false"></textarea></div>
+          <div id="restoredFilesArea" class="hidden"><h3>Unzipped files</h3><p>Save individual files below. For full folder restoration on this device, use the native app.</p><ul id="restoredFilesList"></ul></div>
           <button id="copyResult" class="secondary hidden">Copy result</button><button id="downloadResult" class="secondary">Save another copy</button>
         </div>
       </div>
@@ -97,7 +101,7 @@
             </div>
           </aside></section>
 
-    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle"><h2 id="helpTitle">A few things to know</h2><div class="help-grid"><article><h3>Your password is the key</h3><p>Use a long, unique password or the built-in password generator. No account or recovery service exists. An incorrect password or altered package fails authentication.</p></article><article><h3>ZIP files and mobile folders</h3><p>Folder picking varies by Android/iOS browser and system file picker. Password-mode files and folders are ZIP-compressed before encryption. Decrypting one of these packages downloads its unencrypted ZIP; extract it with your device’s archive tool. Browser pickers usually expose files rather than empty directories.</p></article><article><h3>Keep this tab open</h3><p>Phones may pause background tabs during long operations. Keep the page visible. Available memory, free storage, file count, and browser download behavior limit large packages.</p></article><article><h3>Keep originals under your control</h3><p>The browser cannot reliably shred originals. It keeps selected files untouched. The native desktop app offers optional best-effort shredding after saving and verifying an archive.</p></article><article><h3>Clear after use</h3><p>Credentials and source input clear after a completed result. Clear workspace releases active results; the app also clears them after ten idle minutes. This does not delete downloads or clipboard contents.</p></article></div><details><summary>Cryptography and format compatibility</summary><p>Password mode uses AES-256-GCM authenticated encryption and Argon2id v1.3 (64 MiB, three passes, one lane, a fresh 128-bit salt). Password-mode file/folder ZIPs use authenticated CS4 records; text packages use PRISMVAULT3. Encrypted password output is decrypted and compared before saving, and input packages are authenticated before restoration. Legacy password packages remain readable. Names and paths inside the package are encrypted; the downloaded filename may still reveal the original basename. The restored ZIP is a normal, unencrypted archive: protect it like your originals.</p><p>The .cen extension does not select an algorithm. Native-app XChaCha20-Poly1305 packages require the native app and cannot be opened here. OpenPGP is a separate key-based option in this browser tool; verify recipient fingerprints independently. Integrity checking does not verify a sender’s signature.</p></details><details><summary>Privacy and device limits</summary><p>The application makes no file-content uploads or analytics requests and uses no app cookies, localStorage, sessionStorage, or database. When you open this tool from the website, GitHub Pages receives normal requests for the page and its bundled assets. Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</p><p>This tool has no independent cryptographic certification or institutional approval. For student information, follow your school’s review and data-handling rules. The <a href="../#downloads">native desktop app</a> runs offline without a browser.</p></details><p><a href="integrity.json">Inspect shipped source hashes</a> · <a href="https://github.com/mguhlin/cipherenc">View the source</a></p></section>
+    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle"><h2 id="helpTitle">A few things to know</h2><div class="help-grid"><article><h3>Your password is the key</h3><p>Use a long, unique password or the built-in password generator. No account or recovery service exists. An incorrect password or altered package fails authentication.</p></article><article><h3>ZIP files and mobile folders</h3><p>Folder picking varies by Android/iOS browser and system file picker. Password-mode files and folders are ZIP-compressed before encryption. Decryption automatically unzips the archive and restores your original file. Supporting browsers can write the restored tree into a new folder; other browsers offer individual file saves, with ZIP as an optional alternative. Browser pickers usually expose files rather than empty directories.</p></article><article><h3>Keep this tab open</h3><p>Phones may pause background tabs during long operations. Keep the page visible. Available memory, free storage, file count, and browser download behavior limit large packages.</p></article><article><h3>Keep originals under your control</h3><p>The browser cannot reliably shred originals. It keeps selected files untouched. The native desktop app offers optional best-effort shredding after saving and verifying an archive.</p></article><article><h3>Clear after use</h3><p>Credentials and source input clear after a completed result. Clear workspace releases active results; the app also clears them after ten idle minutes. This does not delete downloads or clipboard contents.</p></article></div><details><summary>Cryptography and format compatibility</summary><p>Password mode uses AES-256-GCM authenticated encryption and Argon2id v1.3 (64 MiB, three passes, one lane, a fresh 128-bit salt). Password-mode file/folder ZIPs use authenticated CS4 records; text packages use PRISMVAULT3. Encrypted password output is decrypted and compared before saving, and input packages are authenticated before restoration. Legacy password packages remain readable. Names and paths inside the package are encrypted; the downloaded filename may still reveal the original basename. Restored files are ordinary, unencrypted originals: protect them accordingly. Encrypted text is shown in a result box for copying as well as saving.</p><p>The .cen extension does not select an algorithm. Native-app XChaCha20-Poly1305 packages require the native app and cannot be opened here. OpenPGP is a separate key-based option in this browser tool; verify recipient fingerprints independently. Integrity checking does not verify a sender’s signature.</p></details><details><summary>Privacy and device limits</summary><p>The application makes no file-content uploads or analytics requests and uses no app cookies, localStorage, sessionStorage, or database. When you open this tool from the website, GitHub Pages receives normal requests for the page and its bundled assets. Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</p><p>This tool has no independent cryptographic certification or institutional approval. For student information, follow your school’s review and data-handling rules. The <a href="../#downloads">native desktop app</a> runs offline without a browser.</p></details><p><a href="integrity.json">Inspect shipped source hashes</a> · <a href="https://github.com/mguhlin/cipherenc">View the source</a></p></section>
   </main>
 
   <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
@@ -151,7 +155,8 @@
   <script src="vendor/openpgp/openpgp.min.js" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
   <script src="vendor/hash-wasm/argon2.umd.min.js" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
   <script src="vendor/jszip/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
-  <script src="app.js" integrity="sha384-oS6K2XnIk+FRmAzOA3ikq5n9ll71cQbIGOJS8Nj8mHwZSSinDqDDJ2Gk5ONYkc4+"></script>
+  <script src="app.js" integrity="sha384-B9E7hE0kank/C0YH+M6brZ0+QrN9ESicFATGYWWv7WvLcIdCQ8Ovu43PQb1sQE74"></script>
   <script src="app-language.js" data-ds-language="cipherenc" data-ds-language-storage="none"></script>
-<script src="browser.js" integrity="sha384-fX8bGXK03JbGHEyo+T3L6vC2U8/Psd7Ob8nvudCloaSdiWv04+/oCEY+OPaDXk9c"></script></body>
+<script src="restore.js" integrity="sha384-pKykT/rxPBDhGNiFle8vedrOMpq5kD3XsSmsg6g+9WZzO7KZmKN4pMwc5K3tZav6"></script>
+<script src="browser.js" integrity="sha384-GtIHmWaMxvrt/90ff10oOHvAYhpGW9SwTrsQ1g3qMZ/Jh0J73/LgcUsq6Upb6/8V"></script></body>
 </html>

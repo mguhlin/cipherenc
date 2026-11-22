@@ -1,10 +1,15 @@
 name: CipherEnc checks
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   native:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -16,6 +21,8 @@ jobs:
           cache: false
       - run: go mod download
       - run: go test -mod=readonly -race ./...
+      - if: runner.os == 'Windows'
+        run: go test -mod=readonly -run TestAdjacentArchiveRestoreAndShred -count=20 .
       - run: go vet -mod=readonly ./...
       - run: go build -mod=readonly -trimpath -o cipherenc-smoke .
       - if: runner.os == 'Linux'
