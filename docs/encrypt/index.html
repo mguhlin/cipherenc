@@ -13,10 +13,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="CipherEnc">
   <link rel="apple-touch-icon" href="assets/drawsplat-logo.png">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="security.css">
-  <link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="browser.css">
-  <link rel="stylesheet" href="app-language.css">
+  <link rel="stylesheet" href="styles.css?v=abcc0a5b3207">
+  <link rel="stylesheet" href="security.css?v=d2d1188e5903">
+  <link rel="stylesheet" href="mobile.css?v=63d50281cbb7">
+  <link rel="stylesheet" href="app-language.css?v=dbf94be48a86">
+  <link rel="stylesheet" href="browser.css?v=e0e43336b96d">
 
 
 </head>
@@ -25,14 +26,14 @@
 
   <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><img class="brand-symbol" src="assets/cipherenc-mark.svg" alt="" width="40" height="45"><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="#browser-help">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
   <main>
-    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2>
+    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.</p>
       <div class="app-shell">
 <div class="app-grid">
           <div class="control-panel">
 
             <div id="passwordCredentials">
               <div class="password-row">
-                <label class="field-label step-heading" for="password"><span class="step-number">1</span> Vault password</label>
+                <label class="field-label step-heading" for="password"><span class="step-number">1</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="12" r="7"/><path d="m16 17 11 11m-6-6 3-3m0 6 3-3"/></svg><span>Vault Password</span></label>
                 <button id="generatePassword" class="mini-action" type="button">Generate a password</button>
               </div>
               <p class="step-hint">Set your password here. Use the same password to unlock an encrypted result.</p>
@@ -41,7 +42,7 @@
               <p class="password-note">Save this password safely. Files are ZIP-compressed before encryption. Originals stay untouched in the browser.</p>
             </div>
 
-            <h3 class="step-heading"><span class="step-number">2</span> Content to protect or unlock</h3><p class="step-hint">Choose files/folders or text. CipherEnc detects what to do automatically.</p>
+            <h3 class="step-heading"><span class="step-number">2</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h10l3 4h13v15H3Z"/><path d="M9 9V3h15v10M13 7h7M9 19h15M9 23h11"/></svg><span>Content to Protect or Unlock</span></h3><p class="step-hint">Choose files/folders or text. CipherEnc detects what to do automatically.</p>
             <div id="fileInputArea">
               <div id="dropZone" class="drop-zone" aria-label="File and folder drop area">
                 <input id="fileInput" type="file" multiple hidden>
@@ -72,7 +73,7 @@
             </details>
 
             <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
-            <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span> Get your result</h3><p class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .cen file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
+            <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v17m-6-6 6 6 6-6M4 21v8h24v-8"/></svg><span>Get Your Result</span></h3><p class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .cen file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
             <p id="inputIntent" class="password-note" role="status">Add originals to encrypt, or an encrypted package to unlock.</p>
             <p id="errorMessage" class="error" role="alert"></p>
           </div>
@@ -152,11 +153,11 @@
     </form>
   </dialog>
   <footer class="wrap"><a class="brand" href="../"><span>CIPHER<em>ENC</em></span></a><p>CipherEnc browser encryption. Your data stays with you.</p><a href="../#downloads">Get the native app</a></footer>
-  <script src="vendor/openpgp/openpgp.min.js" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
-  <script src="vendor/hash-wasm/argon2.umd.min.js" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
-  <script src="vendor/jszip/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
-  <script src="app.js" integrity="sha384-B9E7hE0kank/C0YH+M6brZ0+QrN9ESicFATGYWWv7WvLcIdCQ8Ovu43PQb1sQE74"></script>
-  <script src="app-language.js" data-ds-language="cipherenc" data-ds-language-storage="none"></script>
-<script src="restore.js" integrity="sha384-pKykT/rxPBDhGNiFle8vedrOMpq5kD3XsSmsg6g+9WZzO7KZmKN4pMwc5K3tZav6"></script>
-<script src="browser.js" integrity="sha384-GtIHmWaMxvrt/90ff10oOHvAYhpGW9SwTrsQ1g3qMZ/Jh0J73/LgcUsq6Upb6/8V"></script></body>
+  <script src="vendor/openpgp/openpgp.min.js?v=9736f49e8179" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
+  <script src="vendor/hash-wasm/argon2.umd.min.js?v=dcec617a2e1b" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
+  <script src="vendor/jszip/jszip.min.js?v=acc7e41455a8" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
+  <script src="app.js?v=90522ed92fd5" integrity="sha384-B9E7hE0kank/C0YH+M6brZ0+QrN9ESicFATGYWWv7WvLcIdCQ8Ovu43PQb1sQE74"></script>
+  <script src="app-language.js?v=7a3767648811" data-ds-language="cipherenc" data-ds-language-storage="none" integrity="sha384-WvXndbqwMbW6nkLPGcAYM6As+l+B4EzINlyudBE1FTT/GV2bZmfTZmUfZnQ3R2Cu"></script>
+<script src="restore.js?v=f7b07cbb5ba1" integrity="sha384-pKykT/rxPBDhGNiFle8vedrOMpq5kD3XsSmsg6g+9WZzO7KZmKN4pMwc5K3tZav6"></script>
+<script src="browser.js?v=72cfbae98d92" integrity="sha384-GtIHmWaMxvrt/90ff10oOHvAYhpGW9SwTrsQ1g3qMZ/Jh0J73/LgcUsq6Upb6/8V"></script></body>
 </html>
