@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="security.css?v=d2d1188e5903">
   <link rel="stylesheet" href="mobile.css?v=63d50281cbb7">
   <link rel="stylesheet" href="app-language.css?v=dbf94be48a86">
-  <link rel="stylesheet" href="browser.css?v=902a81d377e2">
+  <link rel="stylesheet" href="browser.css?v=27c818359e86">
 
 
 </head>
@@ -26,7 +26,7 @@
 
   <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><img class="brand-symbol" src="assets/cipherenc-mark.svg" alt="" width="40" height="45"><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="#browser-help">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
   <main>
-    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.</p>
+    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2><p class="workspace-version">CipherEnc 1.1.2 · Browser version</p><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.</p>
       <p class="workspace-mode-links"><a class="secondary mode-link" href="openpgp.html">Use OpenPGP</a><a href="openpgp.html#key-help">How OpenPGP keys work</a></p>
       <div class="app-shell">
 <div class="app-grid">
@@ -100,12 +100,52 @@
             <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
             <div class="checks">
               <div><span class="check">✓</span><p><strong id="algorithmLabel">AES-256-GCM</strong><small id="algorithmCopy">Authenticated encryption</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong id="keyMethodLabel">Argon2id v1.3</strong><small id="keyMethodCopy">64 MiB · 3 passes</small></p><span class="lock">▣</span></div>
+              <div><span class="check">✓</span><p><strong id="keyMethodLabel">Password-derived key</strong><small id="keyMethodCopy">Strengthened with Argon2id</small></p><span class="lock">▣</span></div>
               <div><span class="check">✓</span><p><strong>Local processing</strong><small>Network-free by design</small></p><span class="lock">▣</span></div>
             </div>
           </aside></section>
 
-    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle"><h2 id="helpTitle">A few things to know</h2><div class="help-grid"><article><h3>Your password is the key</h3><p>Use a long, unique password or the built-in password generator. No account or recovery service exists. An incorrect password or altered package fails authentication.</p></article><article><h3>ZIP files and mobile folders</h3><p>Folder picking varies by Android/iOS browser and system file picker. Password-mode files and folders are ZIP-compressed before encryption. Decryption automatically unzips the archive and restores your original file. Supporting browsers can write the restored tree into a new folder; other browsers offer individual file saves, with ZIP as an optional alternative. Browser pickers usually expose files rather than empty directories.</p></article><article><h3>Keep this tab open</h3><p>Phones may pause background tabs during long operations. Keep the page visible. Available memory, free storage, file count, and browser download behavior limit large packages.</p></article><article><h3>Keep originals under your control</h3><p>The browser cannot reliably shred originals. It keeps selected files untouched. The native desktop app offers optional best-effort shredding after saving and verifying an archive.</p></article><article><h3>Clear after use</h3><p>Credentials and source input clear after a completed result. Clear workspace releases active results; the app also clears them after ten idle minutes. This does not delete downloads or clipboard contents.</p></article></div><details><summary>Cryptography and format compatibility</summary><p>Password mode uses AES-256-GCM authenticated encryption and Argon2id v1.3 (64 MiB, three passes, one lane, a fresh 128-bit salt). Password-mode file/folder ZIPs use authenticated CS4 records; text packages use PRISMVAULT3. Encrypted password output is decrypted and compared before saving, and input packages are authenticated before restoration. Legacy password packages remain readable. Names and paths inside the package are encrypted; the downloaded filename may still reveal the original basename. Restored files are ordinary, unencrypted originals: protect them accordingly. Encrypted text is shown in a result box for copying as well as saving.</p><p>The .cen extension does not select an algorithm. Native-app XChaCha20-Poly1305 packages require the native app and cannot be opened here. OpenPGP is a separate key-based option in this browser tool; verify recipient fingerprints independently. Integrity checking does not verify a sender’s signature.</p></details><details><summary>Privacy and device limits</summary><p>The application makes no file-content uploads or analytics requests and uses no app cookies, localStorage, sessionStorage, or database. When you open this tool online, the website receives normal requests for the page and its bundled assets. Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</p><p>This tool has no independent cryptographic certification or institutional approval. For student information, follow your school’s review and data-handling rules. The <a href="../#downloads">native desktop app</a> runs offline without a browser.</p></details><p><a href="integrity.json">Inspect shipped source hashes</a> · <a href="https://github.com/mguhlin/cipherenc">View the source</a></p></section>
+    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle">
+      <h2 id="helpTitle">Browser FAQs</h2>
+      <details open><summary>What do I do first?</summary><ul>
+        <li>Set a strong password in Step 1.</li>
+        <li>Add files or a folder, or type/paste text in Step 2. Encrypted content is detected automatically.</li>
+        <li>Find the saved file or copy your text result in Step 3.</li>
+      </ul></details>
+      <details><summary>Where does my result go?</summary><ul>
+        <li>Encrypted files download automatically as .cen. Your browser controls where they save.</li>
+        <li>Some browsers ask for a save location before processing. Other browsers use their normal download settings.</li>
+        <li>The browser cannot automatically save beside your original file. Use the desktop app for that workflow.</li>
+      </ul></details>
+      <details><summary>What happens to a folder?</summary><ul>
+        <li>Files and folders are ZIP-compressed before password encryption. Unlocking unzips them automatically.</li>
+        <li>A single restored file downloads directly. For folders, supported browsers can write a new folder; others offer individual file saves or an optional ZIP.</li>
+        <li>Folder picking varies by phone and browser. Empty folders may not be included.</li>
+      </ul></details>
+      <details><summary>Can I copy encrypted text?</summary><ul>
+        <li>Yes. Encrypted text appears in a result box with a Copy button and is saved as a .cen file.</li>
+        <li>Paste the encrypted text with the same password to unlock it. If copying is blocked, select the text and copy it manually.</li>
+      </ul></details>
+      <details><summary>What if I forget the password or a file will not open?</summary><ul>
+        <li>Passwords cannot be recovered. Save yours securely.</li>
+        <li>Check the password and make sure the encrypted file is complete. Changed or incomplete files fail authentication.</li>
+        <li>OpenPGP messages need the <a href="openpgp.html">key workspace</a>. Native XChaCha20 packages need the desktop app.</li>
+      </ul></details>
+      <details><summary>Are originals shredded or replaced?</summary><ul>
+        <li>No. This browser tool leaves originals untouched.</li>
+        <li>The desktop app can ask about best-effort shredding after saving and verifying an encrypted archive.</li>
+      </ul></details>
+      <details><summary>What stays on my device?</summary><ul>
+        <li>Your files, text, passwords and keys are processed in this tab, without uploads, analytics or saved accounts.</li>
+        <li>When you open this tool online, the website receives normal requests for the page and its bundled assets.</li>
+        <li>Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</li>
+      </ul></details>
+      <details><summary>What does Clear workspace do?</summary><ul>
+        <li>It releases the active inputs and results. The workspace also clears after ten idle minutes.</li>
+        <li>It does not delete downloads, clipboard contents or backups. Keep the tab open while processing, especially on phones.</li>
+      </ul></details>
+      <p><a href="../#downloads">Get the desktop app</a> · <a href="openpgp.html">Use OpenPGP keys</a></p>
+    </section>
   </main>
 
   <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
@@ -159,7 +199,7 @@
   <script src="vendor/openpgp/openpgp.min.js?v=9736f49e8179" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
   <script src="vendor/hash-wasm/argon2.umd.min.js?v=dcec617a2e1b" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
   <script src="vendor/jszip/jszip.min.js?v=acc7e41455a8" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
-  <script src="app.js?v=eaeeae43e9fa" integrity="sha384-BIx7wyr1vYWNubnK+8+dh/0jRvmw23hGPsBPtM2lX5O8opujrrLkorhKqILg1DTS"></script>
+  <script src="app.js?v=ef63cae365c4" integrity="sha384-QAvVeRGKSvbgbJZPhcISq7aRWKqKoCQtgvWVu+ywgFQa2LY4N1g9xTK3ZuESGosQ"></script>
   <script src="app-language.js?v=7a3767648811" data-ds-language="cipherenc" data-ds-language-storage="none" integrity="sha384-WvXndbqwMbW6nkLPGcAYM6As+l+B4EzINlyudBE1FTT/GV2bZmfTZmUfZnQ3R2Cu"></script>
 <script src="restore.js?v=f7b07cbb5ba1" integrity="sha384-pKykT/rxPBDhGNiFle8vedrOMpq5kD3XsSmsg6g+9WZzO7KZmKN4pMwc5K3tZav6"></script>
 <script src="browser.js?v=bc6e80807a74" integrity="sha384-TxcOPgOcylnPIdeGabWOAUgFNLb6pHQ5VXTi3shUgJEjZuyGLXCVlkKKQeDNIoHI"></script><script src="pgp-ui.js?v=560418fdcb02" integrity="sha384-i28/1eifB0LHD4NLe4ccGlbx3cB8JYLHJD1knhsGqf1CRG6bWoPWFKnKh3UW8LQP"></script></body>

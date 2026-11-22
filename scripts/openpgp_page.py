@@ -22,8 +22,43 @@ def build(index):
  page=page.replace('Protect a file, folder, or private note.','Protect with public and private keys.')
  page=page.replace('Browser workspace</p>','OpenPGP workspace</p>')
  page=page.replace('Enter a strong password first, then drop your files to start. Or choose files and press the action button. Encrypted files download automatically; your browser controls the save location. On phones and tablets, start with a file or text; folder selection depends on the browser and its file picker.','Paste or import a public key to encrypt, or your private key to decrypt. No vault password is needed. If your private key is protected, its passphrase unlocks it locally. Text results can be copied on screen.')
- help='''<section id="key-help" class="wrap browser-help" aria-labelledby="keyHelpTitle"><h2 id="keyHelpTitle">How do I add my OpenPGP keys?</h2><div class="help-grid"><article><h3>Encrypt for someone</h3><p>Ask the recipient for their public key. In Step 1, paste the complete block beginning BEGIN PGP PUBLIC KEY BLOCK, or choose Import key file for their exported .asc/.pgp key. Compare the displayed fingerprint with them through another trusted channel. Add a file or message in Step 2, then encrypt.</p></article><article><h3>Decrypt a message</h3><p>Use the private key that matches the public key used to encrypt the message. Paste its complete block or import its exported key file in Step 1. If it is protected, enter its private-key passphrase. Add the encrypted file or paste the encrypted message in Step 2; CipherEnc detects decryption automatically.</p></article><article><h3>Existing keys, no online linking</h3><p>Export keys from your trusted OpenPGP key manager. This workspace uses existing keys; it does not create a key pair, link to an account, or fetch from a key server. Keys stay in this tab’s memory and clear after success, Clear or inactivity. Reimport or paste them for another operation. Keep the private key private and backed up.</p></article><article><h3>Know the limits</h3><p>This page handles one file or text. ZIP folders first, or use the Password workspace for automatic folder packaging. Results are standard OpenPGP messages saved with CipherEnc’s .cen extension. Other tools may expect .gpg/.asc; changing the suffix does not change the format. Decryption checks integrity, but this page does not verify a sender’s signature.</p></article></div></section>'''
+ help='''<section id="browser-help" class="wrap browser-help" aria-labelledby="keyHelpTitle">
+  <span id="key-help"></span><h2 id="keyHelpTitle">OpenPGP FAQs</h2>
+  <details open><summary>Which key should I use?</summary><ul>
+    <li><strong>To encrypt:</strong> use the recipient’s public key. Compare its fingerprint with them through another trusted channel.</li>
+    <li><strong>To unlock:</strong> use the private key matching the public key that encrypted the message.</li>
+    <li>If the private key is protected, enter its private-key passphrase too.</li>
+  </ul></details>
+  <details><summary>How do I add my existing key?</summary><ul>
+    <li>Export the key from your OpenPGP key manager.</li>
+    <li>In Step 1, paste the complete public/private key block or choose Import key file for its .asc/.pgp export.</li>
+    <li>Check the displayed fingerprint, then add your file or text in Step 2.</li>
+    <li>Import a key file or paste its contents; a key-server web address will not work here.</li>
+  </ul></details>
+  <details><summary>Can I encrypt folders or several files?</summary><ul>
+    <li>This workspace handles one file or text message at a time. ZIP a folder or group of files first.</li>
+    <li>Use the <a href="index.html">password workspace</a> for automatic file/folder packaging and restoration.</li>
+  </ul></details>
+  <details><summary>Where is my result?</summary><ul>
+    <li>Encrypted files download as .cen; your browser controls the save location.</li>
+    <li>Encrypted and decrypted text appear on screen with a Copy button.</li>
+    <li>These are standard OpenPGP messages. Other OpenPGP tools may expect a .gpg or .asc filename ending.</li>
+  </ul></details>
+  <details><summary>Are my keys saved or linked to an account?</summary><ul>
+    <li>No. Keys are used in this tab and clear after success, Clear or inactivity. Import or paste them again for another operation.</li>
+    <li>CipherEnc does not create key pairs, fetch keys from servers or link to an account.</li>
+    <li>Keep your private key private and backed up. CipherEnc cannot recover a lost key or passphrase.</li>
+  </ul></details>
+  <details><summary>Does my data leave my device?</summary><ul>
+    <li>Files, text, keys and passphrases are processed locally in this tab.</li>
+    <li>The website receives normal page and asset requests.</li>
+    <li>Your browser, downloads, clipboard, backups and extensions remain under your device’s controls.</li>
+  </ul></details>
+  <details><summary>Can I use this key in the desktop app?</summary><ul>
+    <li>OpenPGP is available in the browser and Android app. The native desktop apps use password encryption.</li>
+    <li>For a password-protected .cen file, open the <a href="index.html">password workspace</a>.</li>
+  </ul></details>
+</section>'''
  start=page.index('    <section id="browser-help"');end=page.index('</section>',start)+len('</section>')
- privacy='''<section id="browser-help" class="wrap browser-help"><h2>Privacy and OpenPGP limits</h2><p>Files, messages, keys and passphrases are processed in this tab; CipherEnc does not upload or store them. The website receives ordinary page and asset requests. Keep the page open while working. Browser memory, downloads, clipboard contents, OS backups and extensions remain under your device’s control.</p><p>The workspace uses existing OpenPGP keys and does not provide account recovery or a key server. Encryption does not identify a sender. Your matching private key and its passphrase, when protected, are required to decrypt. The native Go apps use AES/XChaCha20 and do not include OpenPGP.</p><p><a href="https://www.gnupg.org/gph/en/manual.html">GnuPG guide to public and private keys</a> · <a href="integrity.json">Inspect source hashes</a> · <a href="index.html">Use the password workspace</a></p></section>'''
- page=page[:start]+help+privacy+page[end:]
+ page=page[:start]+help+page[end:]
  return page

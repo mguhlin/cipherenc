@@ -33,6 +33,7 @@ hashes={name:hashlib.sha256(after.encode() if name=='index.html' else pgp_after.
 output=json.dumps({'sha256':hashes},indent=2)+'\n'
 landing=root.parent/'index.html';landing_before=landing.read_text()
 landing_after=re.sub(r'href="encrypt/(?:\?v=[a-f0-9]{12})?(#[^" ]*)?"',lambda match:'href="encrypt/?v='+hashes['index.html'][:12]+(match[1] or '')+'"',landing_before)
+landing_after=re.sub(r'href="site\.css(?:\?v=[a-f0-9]{12})?"', 'href="site.css?v='+hashlib.sha256((root.parent/'site.css').read_bytes()).hexdigest()[:12]+'"',landing_after)
 if '--check' in sys.argv:
  if before!=after or manifest.read_text()!=output or landing_before!=landing_after or pgp_before!=pgp_after:raise SystemExit('Browser integrity records need regeneration: python3 scripts/update-integrity.py')
  print('Browser integrity records and content-addressed asset URLs match')

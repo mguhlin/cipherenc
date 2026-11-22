@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import re
 import shutil
 import subprocess
 import urllib.request
@@ -17,6 +18,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT.parent
+VERSION = re.search(r'const version = "([^"]+)"', (PROJECT/'main.go').read_text())[1]
 ARTIFACTS = (
     ('platform-36_r02.zip', '2c1a80dd4d9f7d0e6dd336ec603d9b5c55a6f576'),
     ('build-tools_r36_linux.zip', 'b0b6376977657e8ad9b969bacf4093601da2c6fb'),
@@ -52,7 +54,7 @@ def toolchain(cache):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--assets', type=Path, default=PROJECT/'docs/encrypt')
-    parser.add_argument('--output', type=Path, default=ROOT/'build/CipherEnc-Android-evaluation.apk')
+    parser.add_argument('--output', type=Path, default=ROOT/'build'/f'CipherEnc-{VERSION}-Android-evaluation.apk')
     parser.add_argument('--cache', type=Path, default=Path.home()/'.cache/cipherenc-android-toolchain')
     parser.add_argument('--offline', action='store_true', help='require the verified toolchain archives already in cache')
     args = parser.parse_args()

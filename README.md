@@ -6,11 +6,13 @@ CipherEnc protects files, folders, and text on your own device. Encrypted packag
 - **Browser tool:** [Open CipherEnc](https://mguhlin.github.io/cipherenc/encrypt/). Files, folders, and text are processed in browser memory using locally hosted cryptographic assets. Works with modern desktop, Android and iOS browsers, subject to their file-picker and memory limits.
 - **Android evaluation APK:** an installable app bundling the browser tool in Android's system WebView. No external browser and no INTERNET permission. This is a development-signed evaluation build, not the Go desktop application; device/emulator testing remains pending.
 
+**Current version: 1.1.2.** The version appears in the app window, website and extracted download-folder names. Install updates by downloading the current release and reopening the refreshed app.
+
 Website and downloads: https://mguhlin.github.io/cipherenc/
 
 ## Start here
 
-Open `dist/START HERE.txt`, then choose **Windows**, **Mac**, or **Linux**. The Desktop `CipherEnc` shortcut points to this organized distribution; the actual files live in this repository's `dist/` folder. Root distribution folders contain the entry points. Manuals, licenses, checksums, source and ZIP downloads are under `Support/`.
+Open `dist/CipherEnc-1.1.2/START HERE.txt`, then choose **Windows**, **Mac**, or **Linux**. The Desktop `CipherEnc-1.1.2` folder and `CipherEnc` shortcut point to this organized distribution; the actual files live in this repository's `dist/CipherEnc-1.1.2/` folder. Root distribution folders contain the entry points. Manuals, licenses, checksums, source and ZIP downloads are under `Support/`.
 
 | Device | Native application |
 | --- | --- |
@@ -29,7 +31,7 @@ The desktop builds do not have Microsoft publisher certificates or Apple Develop
 
 There are no action, file-vault, text-vault, or integrity tabs. Add original files/folders to encrypt, or a recognized encrypted package to decrypt. CipherEnc inspects the contents; renaming a file does not change its format. A `.cen` file with unrecognized contents is rejected instead of silently encrypted again.
 
-**Desktop:** enter and confirm a strong password, then drop files/folders into the box or use **Choose files / Choose folder**. Each top-level item is ZIP-compressed in memory, encrypted with AES-256-GCM, saved beside its original as `name.cen`, and reopened for authenticated verification. Existing outputs receive a numbered name. If you choose inputs first, enter the password and press **Process selected**. Dropping an encrypted package restores into a new folder beside it after authentication. ZIP extraction rejects unsafe paths, links, duplicate portable names and excessive expansion; empty directories from desktop selections are preserved.
+**Desktop:** enter and confirm a strong password, then drop files/folders into the box or use **Choose files / Choose folder**. Each top-level item is ZIP-compressed in memory, encrypted with AES-256-GCM, saved beside its original as `name.cen`, and reopened for authenticated verification. Existing outputs receive a numbered name. If you choose inputs first, enter and confirm the password; matching fields start encryption automatically after a short typing/paste pause. There is no need to click **Process selected** for files or folders. A mismatch waits, and Clear cancels a pending start. If you generate a password after selecting originals, copy/save it and paste it into the confirmation field to start. For encrypted inputs selected first, enter the password and press Enter to finish password entry. Dropping an encrypted package restores into a new folder beside it after authentication. ZIP extraction rejects unsafe paths, links, duplicate portable names and excessive expansion; empty directories from desktop selections are preserved.
 
 Type or paste text in the same window. CipherEnc detects supported encrypted text automatically. Press **Process selected**: encrypted notes are saved through the system save picker, while decrypted text appears in the text area. AES notes use the pasteable PRISMVAULT3 format shared with the browser. **Advanced options** holds the optional desktop-only XChaCha20 note algorithm. A retained result can be saved again if a save was cancelled.
 
@@ -49,7 +51,7 @@ This is **best effort**, not guaranteed physical erasure: SSD controllers, copy-
 
 **AES-256-GCM** is the default. The native app uses the CS4 container with Argon2id v1.3, 64 MiB, three passes, one lane, a fresh 128-bit salt, independently authenticated chunks, and encrypted file metadata. It supports up to 10,000 files totaling 256 MiB per package. The desktop ZIP workflow preserves empty directories; browser folder pickers generally expose only files. It also reads legacy CS2/CS3 and text v1/v2/v3 containers, including saved PRISMVAULT notes. Native and browser CS4 interoperability is tested in both directions.
 
-**XChaCha20-Poly1305** uses a 256-bit key and a random 192-bit nonce with fixed-cost Argon2id. It supports one file or note up to 16 MiB. Its `.cen` packages use CipherEnc's `CENCX01!` format, which is desktop-only and is not understood by the browser tool or Paranoia. The header is authenticated; filename and contents are encrypted. This new container has not had an independent cryptographic audit.
+**XChaCha20-Poly1305** uses a 256-bit key and a random 192-bit nonce with fixed-cost Argon2id. It supports one file or note up to 16 MiB. Its `.cen` packages use CipherEnc's `CENCX01!` format, which is desktop-only and requires the native app. The header is authenticated; filename and contents are encrypted. This new container has not had an independent cryptographic audit.
 
 **OpenPGP** is available in the browser and Android editions through the pinned local OpenPGP.js library. The native Go desktop edition does not include OpenPGP. Check recipient fingerprints independently; integrity verification is not signature verification.
 
@@ -57,7 +59,6 @@ The browser’s **Use OpenPGP** link opens a [dedicated key workspace](https://m
 
 There is no persistent account or key-server link. Export existing keys from a trusted key manager, then import/paste them for each operation; keys clear after success, Clear or inactivity. Key URLs are not fetched. This tool does not generate key pairs or verify sender signatures. Android’s **Use OpenPGP** link opens these key controls within its bundled offline workspace. The desktop Go apps keep their native password interface and AES/XChaCha20 formats; web interface changes do not add OpenPGP to those executables.
 
-RC6, Serpent, Blowfish, Twofish, Threefish, SHACAL-2, and custom cascades are not included. Larger advertised key totals do not establish stronger protection. The Go project's [Twofish documentation](https://pkg.go.dev/golang.org/x/crypto/twofish) recommends AES or XChaCha20-Poly1305 for new applications. No equivalence or compatibility with Paranoia C4 is claimed.
 
 ## Mobile browser details
 
@@ -107,12 +108,12 @@ Browser development checks use pinned Playwright/axe-core dependencies: `npm ci 
 
 `npm test` also checks the dedicated OpenPGP interface with synthetic keys, armored and binary key import, displayed fingerprints, protected-key retry, exact text/file restoration, key clearing, inaccessible key-server URLs, accessibility and mobile viewport layouts. `scripts/openpgp_page.py` derives that page from the shared workspace; `python3 scripts/update-integrity.py` refreshes it and the pinned asset hashes. Its `--check` option detects stale generated pages. Android packages these assets when rebuilt; it does not fetch website updates at runtime. Existing desktop/Android installations receive changes by downloading and installing the refreshed app.
 
-`dist/Support/Downloads/SHA256SUMS.txt` covers distribution archives. See [VCC-REVIEW.md](VCC-REVIEW.md) for actual checks and unverified boundaries. Cross-compilation is not physical-device testing.
+`dist/CipherEnc-1.1.2/Support/Downloads/SHA256SUMS.txt` covers distribution archives. See [VCC-REVIEW.md](VCC-REVIEW.md) for actual checks and unverified boundaries. Cross-compilation is not physical-device testing.
 
 ## License and provenance
 
 CipherEnc and its incorporated engine code are AGPL-3.0-or-later. See `LICENSE`, `UPSTREAM-LICENSE`, `UPSTREAM-NOTICE.md`, `THIRD-PARTY-NOTICES.md`, and `upstream.json`. Keep third-party license notices with redistribution. Corresponding application source, browser dependencies, and vendored Go dependency source are supplied in the release source archive. User files, notes, keys and outputs remain the user's property.
 
-Native drag-and-drop uses bundled Tcl-9-compatible TkDND libraries; their origins and hashes are recorded in `internal/tkdnd/manifest.json`. No extension is fetched at launch. Linux needs libXcursor alongside the usual X11/XWayland libraries. To run the synthetic X11 integration check, install `scripts/requirements-native-tests.txt` for the synthetic X11 sender, then run `xvfb-run -a python3 scripts/check-native-drop.py`. It uses disposable fixtures and chooses Keep original. Windows/macOS native drop behavior still needs physical-system testing.
+Native drag-and-drop uses bundled Tcl-9-compatible TkDND libraries; their origins and hashes are recorded in `internal/tkdnd/manifest.json`. No extension is fetched at launch. Linux needs libXcursor alongside the usual X11/XWayland libraries. To run the synthetic X11 integration check, install `scripts/requirements-native-tests.txt` for the synthetic X11 sender and the maintainer-only `xclip` utility for clipboard/picker tests, then run `xvfb-run -a python3 scripts/check-native-drop.py`. It uses disposable fixtures and chooses Keep original. It exercises password-first drops, file/folder-first native pickers, typed/pasted confirmations, mismatches, Clear cancellation, and generated-password confirmation without clicking Process selected. Windows/macOS native drop behavior still needs physical-system testing.
 
 Go toolchain updates do not change already compiled apps. The app has no expiration or required online service. Future OS/library/security-policy changes can require a rebuild; indefinite compatibility cannot be guaranteed. Keep a supported app, your password and a backup of important archives. Format compatibility fixtures and source are preserved for future recovery.

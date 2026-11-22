@@ -1,31 +1,34 @@
 # CipherEnc website
 
-`index.html` is the download and introduction page. `encrypt/` is the browser-only encryption workspace; it runs independently of the native Go application. `assets/` contains the generated hero/comic artwork and actual Linux native-app screenshots.
+- `index.html` introduces CipherEnc, lists downloads and answers common questions.
+- `encrypt/index.html` is the password workspace for files, folders and text.
+- `encrypt/openpgp.html` is the key workspace, generated from the shared interface by `scripts/openpgp_page.py`.
+- `assets/` contains the banner, three-panel comic and native-app screenshots.
 
-The site uses local CSS, system fonts, and locally bundled cryptographic libraries. JSZip 3.10.1 (MIT option) supplies the mobile folder-restoration download; its package metadata and full dual-license notice are under `encrypt/vendor/jszip/`. It requires no package installation or build step to serve. From the repository root, a local preview can be started with:
+## Preview locally
+
+From the repository root:
 
 ```sh
 python3 -m http.server 8941 --bind 127.0.0.1 --directory docs
 ```
 
-Open `http://127.0.0.1:8941/`. On production, HTTPS supplies the secure context required by browser cryptography and clipboard features. The meta Content Security Policy blocks application connections in the browser workspace. Website response headers and browser/OS activity are outside that meta policy; no response-level framing-policy claim is made.
+Open `http://127.0.0.1:8941/`. The site uses local CSS, system fonts and bundled encryption libraries. Browser cryptography and clipboard features need HTTPS or localhost.
 
-## Browser workspace
+## Update content and versions
 
-The workspace adapts the imported engine snapshot recorded in the repository's `upstream.json`, retaining its AES-GCM/Argon2id formats, legacy readers, file/folder/text workflow, optional OpenPGP keys, password generator, and nonpersistent language control. Changes include CipherEnc branding, `.cen` download suffixes, local navigation, readable helper/control colors, bounded UI operation state, explicit clear, stale-directory-import invalidation, and save/clipboard failure messages. No API endpoint, content upload, telemetry, or native XChaCha20 bridge is included.
+- Keep help focused on CipherEnc tasks, using friendly FAQs and short bullet lists.
+- Show the release version on the website, workspace, app and download folders.
+- `main.go` supplies the version used by the native and Android packagers. Keep browser, website and Android labels consistent with it.
+- Run `python3 scripts/update-integrity.py` after changing browser files; it refreshes the generated key page, hashes and asset URLs.
+- Run `python3 scripts/check-version.py`, `python3 scripts/update-integrity.py --check` and `npm test` before publishing.
+- Keep required dependency licenses with the bundled libraries.
+- Avoid maintenance timestamps in public content.
 
-`encrypt/integrity.json` records SHA-256 hashes of shipped files other than the hash document itself. Update those hashes after changing a browser asset. If `app.js` changes, update its SHA-384 `integrity` value in `encrypt/index.html` too. Do not change the upstream crypto bundles without reviewing their licenses, versions, and compatibility.
+## Files and mobile browsers
 
-The `.cen` filename ending does not distinguish AES, OpenPGP, or native-app XChaCha20 packages. The browser reads supported password formats; native XChaCha20 packages require the native desktop app.
-
-## Mobile limits
-
-File and text workflows are designed for Android and iOS browsers. Folder picking depends on the OS picker; direct directory restoration is not available in every browser. The fallback downloads one unencrypted ZIP preserving safe folder paths. Duplicate normalized paths and unsafe portable filenames are rejected before archive creation. Empty directories are not preserved. Phones may suspend a background tab, and real package sizes are constrained by available memory, free storage, and download behavior.
-
-Desktop Chromium/Firefox/WebKit and emulated Pixel 5/iPhone 13 browser profiles are development test configurations. They do not establish testing on physical Android/iOS hardware. The Android APK is a separate evaluation container using the system WebView and bundled workspace; see the Android build notes and its stated test limits.
-
-## Design and review
-
-The page follows VCC's function-first approach: show the browser action and platform downloads early, explain the reversible password/package workflow with an accessible three-panel comic, show actual app captures, and separate format facts from certification claims. The palette uses blue, silver, and navy. Web design, SecureVCC, education privacy, and Rescue guidance inform the implementation; these are engineering checks, not security/accessibility/legal certifications.
-
-Avoid visitor-facing maintenance timestamps in source, templates, generated metadata, and downloads. Image captions describe what was captured, not when it was captured. Keep generated-image prompts and provenance with project development notes rather than embedding a date in the public page.
+- Password-mode files/folders are ZIP-compressed before encryption and automatically unzipped on restoration.
+- Single restored files download directly. Folder restoration uses a new directory where supported; other browsers offer individual saves or an optional ZIP.
+- Folder picking, empty folders, available memory and save locations depend on the browser and device.
+- Native XChaCha20 packages require the desktop app. OpenPGP uses the key workspace.
+- Android and iPhone viewport tests do not replace testing on physical devices. The Android APK remains an evaluation build.

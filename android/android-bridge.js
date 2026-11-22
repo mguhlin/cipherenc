@@ -10,7 +10,7 @@
   let savedControls = null;
   const note = document.createElement('p');
   note.className = 'android-note';
-  note.textContent = 'Offline Android evaluation app · files and folders up to 16 MiB total · encrypted inputs up to 24 MiB. This app uses Android’s built-in WebView; no external browser or internet connection is required.';
+  note.textContent = 'CipherEnc '+APP_VERSION+' · Offline Android evaluation app · files and folders up to 16 MiB total · encrypted inputs up to 24 MiB. This app uses Android’s built-in WebView; no external browser or internet connection is required.';
   document.querySelector('main')?.prepend(note);
   document.querySelectorAll('a[href]').forEach(link => {
     const href = link.getAttribute('href');

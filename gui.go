@@ -48,6 +48,7 @@ func (u *nativeUI) clearWork() {
 	u.files = nil
 	u.path = ""
 	if u.quick != nil {
+		u.quick.cancelAutoStart()
 		u.quick.paths = nil
 		u.quick.drop.Configure(tk.Txt("Drop files or folders here"))
 		u.quick.current.Configure(tk.Value(0))
@@ -311,9 +312,40 @@ type quickUI struct {
 	cancelled                          atomic.Bool
 	silent                             bool
 	completed                          bool
+	autoStart                          string
+	decryptOnly                        bool
+}
+
+func (q *quickUI) cancelAutoStart() {
+	if q.autoStart != "" {
+		tk.TclAfterCancel(q.autoStart)
+		q.autoStart = ""
+	}
+}
+
+// A matching confirmation marks a complete encryption password. Wait briefly
+// for typing/paste bindings to finish, then recheck live state on the UI thread.
+// Decryption passwords have no confirmation: Enter explicitly ends their input.
+func (q *quickUI) credentialsChanged() {
+	q.cancelAutoStart()
+	if q.u.busy || len(q.paths) == 0 || q.decryptOnly {
+		return
+	}
+	q.autoStart = tk.TclAfter(400*time.Millisecond, func() {
+		q.autoStart = ""
+		if !q.u.busy && len(q.paths) > 0 && !q.decryptOnly {
+			password := q.u.password.Textvariable()
+			if len([]rune(password)) >= 12 && password == q.u.confirm.Textvariable() {
+				q.begin()
+			}
+		}
+	})
 }
 
 func (q *quickUI) lock(busy bool) {
+	if busy {
+		q.cancelAutoStart()
+	}
 	state := "normal"
 	if busy {
 		state = "disabled"
@@ -331,16 +363,20 @@ func (q *quickUI) accept(paths []string) {
 	if q.u.busy || len(paths) == 0 {
 		return
 	}
+	q.cancelAutoStart()
 	if len(paths) > 100 {
 		q.u.status.Configure(tk.Txt("Choose at most 100 items per batch."))
 		return
 	}
 	q.paths = nil
+	q.decryptOnly = true
 	for _, path := range paths {
-		if _, err := isEncryptedInput(path); err != nil {
+		encrypted, err := isEncryptedInput(path)
+		if err != nil {
 			q.u.status.Configure(tk.Txt("Selection stopped: " + err.Error()))
 			return
 		}
+		q.decryptOnly = q.decryptOnly && encrypted
 	}
 	seen := map[string]bool{}
 	q.paths = nil
@@ -387,10 +423,15 @@ func (q *quickUI) accept(paths []string) {
 		q.begin()
 		return
 	}
-	q.u.status.Configure(tk.Txt("Selection ready. Enter your password, then choose Process selected. Confirm it for encryption; encrypted packages need only the password."))
+	if q.decryptOnly {
+		q.u.status.Configure(tk.Txt("Encrypted selection ready. Enter its password and press Enter to unlock beside the original."))
+	} else {
+		q.u.status.Configure(tk.Txt("Selection ready. Enter and confirm a 12+ character password. Encryption starts automatically and saves .cen beside each original."))
+	}
 	tk.Focus(q.u.password)
 }
 func (q *quickUI) begin() {
+	q.cancelAutoStart()
 	u := q.u
 	if !u.busy && len(q.paths) == 0 && u.note.Text() != "" {
 		u.source.Configure(tk.Textvariable("Text"))
@@ -524,7 +565,7 @@ func runGUI(smokeDir string) (err error) {
 			err = fmt.Errorf("Native window could not open: %v", p)
 		}
 	}()
-	tk.App.WmTitle("CipherEnc — Offline encryption")
+	tk.App.WmTitle("CipherEnc " + version + " — Offline encryption")
 	tk.App.Configure(tk.Background(paper))
 	tk.WmGeometry(tk.App, "880x760")
 	tk.WmMinSize(tk.App, 760, 720)
@@ -542,7 +583,7 @@ func runGUI(smokeDir string) (err error) {
 		return parent.Button(tk.Txt(text), tk.Command(fn), font, tk.Background("white"), tk.Foreground(navy), tk.Activebackground(silver), tk.Padx(12), tk.Pady(8), tk.Relief("solid"), tk.Borderwidth(1))
 	}
 	tk.Grid(frame.Label(tk.Txt("CipherEnc"), tk.Font("Helvetica", 26, "bold"), tk.Background(paper), tk.Foreground(navy)), tk.Row(0), tk.Column(0), tk.Sticky("w"))
-	tk.Grid(label(frame.Window, "Offline. On your device."), tk.Row(0), tk.Column(1), tk.Sticky("e"))
+	tk.Grid(label(frame.Window, "v"+version+" · Offline. On your device."), tk.Row(0), tk.Column(1), tk.Sticky("e"))
 	tk.Grid(label(frame.Window, "Drop it. Lock it. Keep it beside the original."), tk.Row(1), tk.Columnspan(2), tk.Sticky("w"), tk.Pady(10))
 	u := &nativeUI{lastActivity: time.Now(), smokeDir: smokeDir}
 	q := &quickUI{u: u, silent: smokeDir != ""}
@@ -554,6 +595,7 @@ func runGUI(smokeDir string) (err error) {
 	tk.Grid(u.password, tk.Row(3), tk.Column(0), tk.Sticky("ew"), tk.Padx(4), tk.Ipady(6))
 	tk.Grid(u.confirm, tk.Row(3), tk.Column(1), tk.Sticky("ew"), tk.Padx(4), tk.Ipady(6))
 	u.generate = button(frame.Window, "Generate password", func() {
+		q.cancelAutoStart()
 		const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*+-="
 		var value strings.Builder
 		var bytes [64]byte
@@ -572,7 +614,13 @@ func runGUI(smokeDir string) (err error) {
 		u.password.Configure(tk.Textvariable(value.String()), tk.Show(""))
 		u.confirm.Configure(tk.Textvariable(value.String()))
 		u.showing = true
-		u.status.Configure(tk.Txt("Record this password securely before adding files. It cannot be recovered."))
+		if len(q.paths) > 0 && !q.decryptOnly {
+			u.confirm.Configure(tk.Textvariable(""))
+			u.status.Configure(tk.Txt("Copy and save this generated password, then paste it into Confirm password. Encryption will start automatically; the password cannot be recovered."))
+			tk.Focus(u.password)
+		} else {
+			u.status.Configure(tk.Txt("Record this password securely before adding files. It cannot be recovered."))
+		}
 	})
 	u.show = button(frame.Window, "Show / hide", func() {
 		show := ""
@@ -594,8 +642,12 @@ func runGUI(smokeDir string) (err error) {
 	tk.Grid(label(simple.Window, "Originals are zipped and encrypted. Recognized packages are unlocked automatically."), tk.Row(1), tk.Sticky("w"), tk.Pady(5))
 	choices := simple.Frame(tk.Background(paper))
 	tk.Grid(choices, tk.Row(2), tk.Sticky("ew"), tk.Pady(6))
-	q.files = button(choices.Window, "Choose files…", func() { q.accept(tk.GetOpenFile(tk.Title("Choose files"), tk.Multiple(true))) })
+	q.files = button(choices.Window, "Choose files…", func() {
+		q.cancelAutoStart()
+		q.accept(tk.GetOpenFile(tk.Title("Choose files"), tk.Multiple(true)))
+	})
 	q.folder = button(choices.Window, "Choose folder…", func() {
+		q.cancelAutoStart()
 		path := tk.ChooseDirectory(tk.Title("Choose folder"))
 		if path != "" {
 			q.accept([]string{path})
@@ -606,7 +658,12 @@ func runGUI(smokeDir string) (err error) {
 	tk.Pack(q.files, q.folder, tk.Side("left"), tk.Padx(3))
 	tk.Grid(q.start, tk.Row(5), tk.Sticky("ew"), tk.Pady(5))
 	tk.Bind(q.drop, "<Return>", tk.Command(func() { q.files.Invoke() }))
-	tk.Bind(u.confirm, "<Return>", tk.Command(q.begin))
+	for _, entry := range []*tk.EntryWidget{u.password, u.confirm} {
+		tk.Bind(entry, "<Return>", tk.Command(q.begin))
+		for _, event := range []string{"<KeyRelease>", "<<Paste>>", "<<Cut>>", "<ButtonRelease-2>"} {
+			tk.Bind(entry, event, tk.Command(q.credentialsChanged))
+		}
+	}
 	// Advanced options contain no action or data-type choice.
 	advanced := frame.Frame(tk.Background(paper))
 	tk.Grid(advanced, tk.Row(5), tk.Columnspan(2), tk.Sticky("ew"))
@@ -626,6 +683,7 @@ func runGUI(smokeDir string) (err error) {
 	tk.Grid(u.note, tk.Row(4), tk.Sticky("ew"))
 	tk.Bind(u.note, "<KeyRelease>", tk.Command(func() {
 		if !u.busy && u.note.Text() != "" {
+			q.cancelAutoStart()
 			q.paths = nil
 			q.drop.Configure(tk.Txt("Drop files or folders here"))
 			u.status.Configure(tk.Txt("Text selected. CipherEnc will detect whether to encrypt or decrypt it."))
@@ -644,7 +702,7 @@ func runGUI(smokeDir string) (err error) {
 	q.stop = button(progress.Window, "Stop", func() { q.cancelled.Store(true); u.status.Configure(tk.Txt("Stopping after the current safe step…")) })
 	q.stop.Configure(tk.State("disabled"))
 	tk.Grid(q.stop, tk.Row(0), tk.Column(4), tk.Padx(8))
-	u.status = label(frame.Window, "Ready. Enter your password, then drop or choose your files.")
+	u.status = label(frame.Window, "Ready. Choose files or enter and confirm your password first.")
 	u.status.Configure(tk.Background("#eaf2fc"), tk.Padx(10), tk.Pady(10), tk.Wraplength(760))
 	tk.Grid(u.status, tk.Row(8), tk.Columnspan(2), tk.Sticky("ew"), tk.Pady(5))
 	footer := frame.Frame(tk.Background(paper))

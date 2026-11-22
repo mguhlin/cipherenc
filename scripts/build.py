@@ -5,12 +5,14 @@ import hashlib
 import os
 from pathlib import Path
 import plistlib
+import re
 import shutil
 import subprocess
 import zipfile
 
 root=Path(__file__).resolve().parents[1]
-parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=root/'dist');parser.add_argument('--package-only',action='store_true');args=parser.parse_args()
+version=re.search(r'const version = "([^"]+)"', (root/'main.go').read_text())[1]
+parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=root/'dist'/f'CipherEnc-{version}');parser.add_argument('--package-only',action='store_true');args=parser.parse_args()
 out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
 support=out/'Support';downloads=support/'Downloads';licenses=support/'Licenses'
 downloads.mkdir(parents=True,exist_ok=True);licenses.mkdir(parents=True,exist_ok=True)
@@ -31,7 +33,7 @@ for goos,arch,platform,kind,label in targets:
  if goos=='darwin':
   contents=folder/'CipherEnc.app'/'Contents';(contents/'MacOS').mkdir(parents=True,exist_ok=True);(contents/'Resources').mkdir(exist_ok=True)
   executable=contents/'MacOS'/'CipherEnc'
-  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':'1.1.1','CFBundleShortVersionString':'1.1.1','CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
+  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':version,'CFBundleShortVersionString':version,'CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
   (contents/'Info.plist').write_bytes(plistlib.dumps(info));(contents/'PkgInfo').write_bytes(b'APPL????')
   for name in docs+notices:shutil.copy2(root/name,contents/'Resources'/name)
  if not args.package_only:
@@ -40,9 +42,9 @@ for goos,arch,platform,kind,label in targets:
   subprocess.run(['go','build','-mod=vendor','-trimpath','-buildvcs=false','-ldflags',flags,'-o',str(executable),'.'],cwd=root,env=env,check=True)
  if not executable.is_file():raise SystemExit('Missing native executable: '+str(executable))
  executable.chmod(0o755)
- archive=downloads/f'CipherEnc-1.1.1-{label}.zip'
+ archive=downloads/f'CipherEnc-{version}-{label}.zip'
  with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
-  package=Path(f'CipherEnc-{label}')
+  package=Path(f'CipherEnc-{version}-{label}')
   for p in sorted(folder.rglob('*')):
    if p.is_file():z.write(p,package/p.relative_to(folder))
   for name in docs:z.write(root/name,package/'Support'/name)
@@ -59,21 +61,21 @@ guides={
 for platform,text in guides.items():(out/platform/'START HERE.txt').write_text('CipherEnc — '+platform+'\n\n'+text+'\nRead ../Support/README.md for help.\n')
 shutil.copy2(root/'docs/encrypt/assets/cipherenc-mark.svg',support/'CipherEnc.svg')
 launcher=out/'Linux'/'Start CipherEnc.desktop'
-launcher.write_text(f'[Desktop Entry]\nType=Application\nName=CipherEnc\nComment=Native offline encryption\nExec="{out}/Linux/x64/CipherEnc"\nIcon={support}/CipherEnc.svg\nTerminal=false\nCategories=Utility;Security;\n');launcher.chmod(0o755)
+launcher.write_text(f'[Desktop Entry]\nType=Application\nName=CipherEnc {version}\nComment=Native offline encryption\nExec="{out}/Linux/x64/CipherEnc"\nIcon={support}/CipherEnc.svg\nTerminal=false\nCategories=Utility;Security;\n');launcher.chmod(0o755)
 
-apk=root/'android/build/CipherEnc-Android-evaluation.apk'
+apk=root/'android/build'/f'CipherEnc-{version}-Android-evaluation.apk'
 if apk.is_file():
- (out/'Android').mkdir(exist_ok=True);shutil.copy2(apk,out/'Android'/'CipherEnc.apk');copy=downloads/apk.name;shutil.copy2(apk,copy);archives.append(copy)
- (out/'Android'/'START HERE.txt').write_text('CipherEnc Android evaluation APK\n\nInstall CipherEnc.apk only if your device policy permits sideloading.\nThis development-signed Android app bundles the browser tool inside the OS WebView.\nIt uses no external browser and requests no INTERNET permission.\nIt is not the native Go desktop app. Physical Android-device testing remains pending.\n')
-source=downloads/'CipherEnc-1.1.1-source.zip'
+ (out/'Android').mkdir(exist_ok=True);shutil.copy2(apk,out/'Android'/apk.name);copy=downloads/apk.name;shutil.copy2(apk,copy);archives.append(copy)
+ (out/'Android'/'START HERE.txt').write_text(f'CipherEnc {version} Android evaluation APK\n\nInstall {apk.name} only if your device policy permits sideloading.\nThis development-signed Android app bundles the browser tool inside the OS WebView.\nIt uses no external browser and requests no INTERNET permission.\nIt is not the native Go desktop app. Physical Android-device testing remains pending.\n')
+source=downloads/f'CipherEnc-{version}-source.zip'
 with zipfile.ZipFile(source,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in sorted(root.rglob('*')):
   if not p.is_file():continue
   rel=p.relative_to(root)
   if set(rel.parts)&{'.git','node_modules','dist','build','test-results','playwright-report','__pycache__'} or p.suffix in ['.keystore','.jks']:continue
   if p.is_relative_to(out):continue
-  z.write(p,Path('CipherEnc-source')/rel)
+  z.write(p,Path(f'CipherEnc-{version}-source')/rel)
 archives.append(source)
 (downloads/'SHA256SUMS.txt').write_text(''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n' for p in archives))
-(out/'START HERE.txt').write_text('CIPHERENC — START HERE\n\nWindows: open Windows, then START HERE.txt.\nMac: open Mac, then START HERE.txt.\nLinux: open Linux, then Start CipherEnc.desktop or the matching executable.\nAndroid: if present, open Android and read its evaluation-build instructions.\n\nNative desktop encryption works fully offline and needs no browser.\nAll encrypted files end in .cen. Keep your password safe; test decryption before deleting originals.\n\nSupport contains the README, review notes, licenses, checksums, source, and download archives.\nWebsite: https://mguhlin.github.io/cipherenc/\n')
+(out/'START HERE.txt').write_text(f'CIPHERENC {version} — START HERE\n\nWindows: open Windows, then START HERE.txt.\nMac: open Mac, then START HERE.txt.\nLinux: open Linux, then Start CipherEnc.desktop or the matching executable.\nAndroid: if present, open Android and read its evaluation-build instructions.\n\nNative desktop encryption works fully offline and needs no browser.\nAll encrypted files end in .cen. Keep your password safe; test decryption before deleting originals.\n\nSupport contains the README, review notes, licenses, checksums, source, and download archives.\nWebsite: https://mguhlin.github.io/cipherenc/\n')
 print('Organized distribution:',out,flush=True)
