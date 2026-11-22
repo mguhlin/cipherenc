@@ -69,7 +69,7 @@ Desktop browser engines and Android/iPhone viewport profiles are tested on Linux
 
 The native app has no local web server, browser dependency, telemetry, update service, network client, account, or database. User-selected data and keys are processed in memory. The desktop file workflow automatically saves a new encrypted archive beside each original and verifies it. Text uses the system save picker. Save creates a new file; folder restoration creates a new randomly named directory and confines paths with Go's `os.Root` APIs. Existing destination files are not overwritten. Originals are retained unless the desktop user explicitly confirms best-effort shredding after verification.
 
-The browser edition serves code/assets through GitHub Pages; the host receives ordinary page requests. Encryption inputs, filenames, passwords and keys are not uploaded by the tool. It uses no app cookies, localStorage, sessionStorage, IndexedDB, remote fonts or analytics. Locally bundled scripts and CSP restrict resource loading. Language selection is not persisted.
+The browser edition serves code/assets through the website; its host receives ordinary page requests. Encryption inputs, filenames, passwords and keys are not uploaded by the tool. It uses no app cookies, localStorage, sessionStorage, IndexedDB, remote fonts or analytics. Locally bundled scripts and CSP restrict resource loading. Language selection is not persisted.
 
 Clear workspace releases active inputs and result references. Native idle clearing runs after ten minutes without interaction. Passwords clear after a successful result. Downloads, clipboard contents, screenshots, document-provider copies, OS swap, backups, extensions, and managed-runtime memory reclamation remain outside app erasure guarantees. A compromised device can expose data. The Android app's no-network permission does not prevent a separately chosen cloud document provider from synchronizing its own files.
 
@@ -84,7 +84,7 @@ School use requires the institution's own review for intended ages, data and dev
 | `internal/tkdnd/` | Bundled native drag-and-drop libraries, pinned provenance and licenses |
 | `vault.go`, `crypto.go` | CS4-compatible AES containers and the separate XChaCha20 container |
 | `vault_test.go`, `archive_test.go`, `selftest.go` | Synthetic round trips, limits, denied cases, restoration and executable self-check |
-| `docs/` | GitHub Pages site, real screenshots, artwork, comic and browser tool |
+| `docs/` | Website, real screenshots, artwork, comic and browser tool |
 | `android/` | Offline Android container, SDK build script and evaluation limitations |
 | `scripts/` | Native builds, compatibility fixtures and validation helpers |
 | `reference/` | Imported engine references and independent compatibility fixtures |

@@ -8,7 +8,7 @@ The site uses local CSS, system fonts, and locally bundled cryptographic librari
 python3 -m http.server 8941 --bind 127.0.0.1 --directory docs
 ```
 
-Open `http://127.0.0.1:8941/`. On production, HTTPS supplies the secure context required by browser cryptography and clipboard features. The meta Content Security Policy blocks application connections in the browser workspace. GitHub Pages response headers and browser/OS activity are outside that meta policy; no response-level framing-policy claim is made.
+Open `http://127.0.0.1:8941/`. On production, HTTPS supplies the secure context required by browser cryptography and clipboard features. The meta Content Security Policy blocks application connections in the browser workspace. Website response headers and browser/OS activity are outside that meta policy; no response-level framing-policy claim is made.
 
 ## Browser workspace
 
