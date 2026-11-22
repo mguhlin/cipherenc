@@ -19,6 +19,9 @@
       link.setAttribute('aria-disabled', 'true');
     }
   });
+  document.querySelectorAll('a[href^="openpgp.html"]').forEach(link=>link.addEventListener('click',event=>{
+    event.preventDefault();setCryptoMethod('openpgp');document.querySelector('.advanced-tools').open=true;document.querySelector('#pgpKeyInput').focus();document.querySelector('#advanced-keys').scrollIntoView({block:'start'});
+  }));
   const folderButton = document.getElementById('chooseFolder');
   folderButton?.addEventListener('click', event => {
     event.preventDefault(); event.stopImmediatePropagation();

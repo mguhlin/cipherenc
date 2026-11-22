@@ -1,0 +1,29 @@
+"""Derive the key-focused page from the shared workspace, keeping one UI source."""
+import re
+
+def build(index):
+ page=index.replace('<body>','<body data-cipherenc-mode="openpgp">',1)
+ page=re.sub(r'<title>.*?</title>','<title>CipherEnc OpenPGP — Public and private keys</title>',page,count=1)
+ page=page.replace('CipherEnc encrypts files, folders, and text locally with AES-256-GCM.','Encrypt with existing OpenPGP public keys or decrypt with your private key, locally on your device.')
+ page=page.replace('<h2 id="workspaceTitle">Secure workspace</h2>','<h2 id="workspaceTitle">OpenPGP workspace</h2>')
+ page=re.sub(r'<p class="workspace-mode-links">.*?</p>','<p class="workspace-mode-links"><a class="secondary mode-link" href="index.html">Use a password instead</a><a href="#key-help">How to add and use your keys</a></p>',page,count=1)
+ key_start=page.index('            <div id="pgpCredentials"');key_end=page.index('            </details>',key_start)
+ keys=page[key_start:key_end].replace('class="pgp-credentials hidden"','class="pgp-credentials"')
+ page=page[:key_start]+page[key_end:]
+ page=page.replace('<details id="advanced-keys" class="advanced-tools">','<details id="advanced-keys" class="advanced-tools" hidden>')
+ start=page.index('            <div id="passwordCredentials">');end=page.index('            <h3 class="step-heading"><span class="step-number">2',start)
+ password=page[start:end].replace('id="passwordCredentials"','id="passwordCredentials" class="hidden"',1)
+ password=re.sub(r'<svg class="step-icon".*?</svg>','',password,count=1)
+ key_step='''<section id="openpgpKeyStep"><h3 class="step-heading"><span class="step-number">1</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="12" r="7"/><path d="m16 17 11 11m-6-6 3-3m0 6 3-3"/></svg><span>Your OpenPGP Key</span></h3><p id="pgpActionHelp" class="step-hint">Public key to encrypt. Matching private key to decrypt.</p>'''+keys+'</section>'
+ page=page[:start]+key_step+password+page[end:]
+ page=page.replace('Choose files/folders or text. CipherEnc detects what to do automatically.','Choose one file or paste text. An encrypted OpenPGP message is detected automatically.')
+ page=page.replace('2a) Drop files or folders here','2a) Drop one file here')
+ page=page.replace('Originals are zipped and encrypted. Encrypted packages are unlocked.','Encrypt a file for a public-key holder, or unlock an OpenPGP message with your private key.')
+ page=page.replace('Protect a file, folder, or private note.','Protect with public and private keys.')
+ page=page.replace('Browser workspace</p>','OpenPGP workspace</p>')
+ page=page.replace('Enter a strong password first, then drop your files to start. Or choose files and press the action button. Encrypted files download automatically; your browser controls the save location. On phones and tablets, start with a file or text; folder selection depends on the browser and its file picker.','Paste or import a public key to encrypt, or your private key to decrypt. No vault password is needed. If your private key is protected, its passphrase unlocks it locally. Text results can be copied on screen.')
+ help='''<section id="key-help" class="wrap browser-help" aria-labelledby="keyHelpTitle"><h2 id="keyHelpTitle">How do I add my OpenPGP keys?</h2><div class="help-grid"><article><h3>Encrypt for someone</h3><p>Ask the recipient for their public key. In Step 1, paste the complete block beginning BEGIN PGP PUBLIC KEY BLOCK, or choose Import key file for their exported .asc/.pgp key. Compare the displayed fingerprint with them through another trusted channel. Add a file or message in Step 2, then encrypt.</p></article><article><h3>Decrypt a message</h3><p>Use the private key that matches the public key used to encrypt the message. Paste its complete block or import its exported key file in Step 1. If it is protected, enter its private-key passphrase. Add the encrypted file or paste the encrypted message in Step 2; CipherEnc detects decryption automatically.</p></article><article><h3>Existing keys, no online linking</h3><p>Export keys from your trusted OpenPGP key manager. This workspace uses existing keys; it does not create a key pair, link to an account, or fetch from a key server. Keys stay in this tab’s memory and clear after success, Clear or inactivity. Reimport or paste them for another operation. Keep the private key private and backed up.</p></article><article><h3>Know the limits</h3><p>This page handles one file or text. ZIP folders first, or use the Password workspace for automatic folder packaging. Results are standard OpenPGP messages saved with CipherEnc’s .cen extension. Other tools may expect .gpg/.asc; changing the suffix does not change the format. Decryption checks integrity, but this page does not verify a sender’s signature.</p></article></div></section>'''
+ start=page.index('    <section id="browser-help"');end=page.index('</section>',start)+len('</section>')
+ privacy='''<section id="browser-help" class="wrap browser-help"><h2>Privacy and OpenPGP limits</h2><p>Files, messages, keys and passphrases are processed in this tab; CipherEnc does not upload or store them. GitHub Pages receives ordinary page and asset requests. Keep the page open while working. Browser memory, downloads, clipboard contents, OS backups and extensions remain under your device’s control.</p><p>The workspace uses existing OpenPGP keys and does not provide account recovery or a key server. Encryption does not identify a sender. Your matching private key and its passphrase, when protected, are required to decrypt. The native Go apps use AES/XChaCha20 and do not include OpenPGP.</p><p><a href="https://www.gnupg.org/gph/en/manual.html">GnuPG guide to public and private keys</a> · <a href="integrity.json">Inspect source hashes</a> · <a href="index.html">Use the password workspace</a></p></section>'''
+ page=page[:start]+help+privacy+page[end:]
+ return page

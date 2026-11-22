@@ -61,6 +61,13 @@ const types = {'.html':'text/html','.js':'application/javascript','.css':'text/c
     assert.equal(await page.locator('#clearWorkspace').isDisabled(), true);
     await page.evaluate(() => window.CipherEncAndroidResult(true, 'Synthetic Android save completed.'));
     assert.equal(await page.locator('#clearWorkspace').isDisabled(), false);
-    console.log('Android JavaScript adapter: stale import, size guard ordering, and explicit save bridge PASS in desktop Chromium. Android device behavior NOT RUN.');
+    const originalURL=page.url();
+    await page.getByRole('link',{name:'Use OpenPGP',exact:true}).click();
+    assert.equal(page.url(),originalURL,'Android key link navigated outside its permitted workspace');
+    assert.equal(await page.evaluate(()=>cryptoMethod),'openpgp');
+    assert.equal(await page.locator('#pgpKeyInput').isVisible(),true);
+    assert.equal(await page.locator('#password').isVisible(),false);
+    assert.equal(await page.locator('#pgpKeyInput').evaluate(e=>e===document.activeElement),true);
+    console.log('Android JavaScript adapter: stale import, size guard ordering, explicit save bridge and inline OpenPGP link PASS in desktop Chromium. Android device behavior NOT RUN.');
   } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

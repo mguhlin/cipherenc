@@ -53,6 +53,10 @@ This is **best effort**, not guaranteed physical erasure: SSD controllers, copy-
 
 **OpenPGP** is available in the browser and Android editions through the pinned local OpenPGP.js library. The native Go desktop edition does not include OpenPGP. Check recipient fingerprints independently; integrity verification is not signature verification.
 
+The browser’s **Use OpenPGP** link opens a [dedicated key workspace](https://mguhlin.github.io/cipherenc/encrypt/openpgp.html). Paste a complete public/private key block in Step 1, or import an exported armored `.asc` or binary `.pgp` key. Its fingerprint appears locally. Encrypt with the recipient’s public key; decrypt with the matching private key and its passphrase, if protected. Step 2 detects encrypted messages automatically. Text results are copyable, and files retain their original filename on decryption. This workspace handles one file or message; ZIP a folder first, or use password mode for automatic folder packaging.
+
+There is no persistent account or key-server link. Export existing keys from a trusted key manager, then import/paste them for each operation; keys clear after success, Clear or inactivity. Key URLs are not fetched. This tool does not generate key pairs or verify sender signatures. Android’s **Use OpenPGP** link opens these key controls within its bundled offline workspace. The desktop Go apps keep their native password interface and AES/XChaCha20 formats; web interface changes do not add OpenPGP to those executables.
+
 RC6, Serpent, Blowfish, Twofish, Threefish, SHACAL-2, and custom cascades are not included. Larger advertised key totals do not establish stronger protection. The Go project's [Twofish documentation](https://pkg.go.dev/golang.org/x/crypto/twofish) recommends AES or XChaCha20-Poly1305 for new applications. No equivalence or compatibility with Paranoia C4 is claimed.
 
 ## Mobile browser details
@@ -100,6 +104,8 @@ python3 scripts/build.py
 The build script disables network module fetching and cross-compiles all six desktop targets with `CGO_ENABLED=0`. Run a native executable's synthetic self-check with `CipherEnc --self-test /path/to/empty-scratch-folder`. `--ui-smoke` is a maintainer test that opens a window, exercises a synthetic archive and exits; `--version` prints the build version. Passwords are never command-line arguments.
 
 Browser development checks use pinned Playwright/axe-core dependencies: `npm ci --ignore-scripts`, install the matching Playwright browsers, then run the documented scripts. `scripts/browser-interop.cjs` verifies native CS4 output in the independent browser engine and generates the committed browser-to-Go fixtures. The optional `scripts/independent_fixture.py` uses system libargon2/libsodium solely to reproduce a test fixture, not as app runtime dependencies.
+
+`npm test` also checks the dedicated OpenPGP interface with synthetic keys, armored and binary key import, displayed fingerprints, protected-key retry, exact text/file restoration, key clearing, inaccessible key-server URLs, accessibility and mobile viewport layouts. `scripts/openpgp_page.py` derives that page from the shared workspace; `python3 scripts/update-integrity.py` refreshes it and the pinned asset hashes. Its `--check` option detects stale generated pages. Android packages these assets when rebuilt; it does not fetch website updates at runtime. Existing desktop/Android installations receive changes by downloading and installing the refreshed app.
 
 `dist/Support/Downloads/SHA256SUMS.txt` covers distribution archives. See [VCC-REVIEW.md](VCC-REVIEW.md) for actual checks and unverified boundaries. Cross-compilation is not physical-device testing.
 

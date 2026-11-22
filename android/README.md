@@ -39,7 +39,9 @@ The dedicated evaluation keystore and its password are stored outside the reposi
 
 ## Development checks
 
-`android/tests/PathValidationTest.java` exercises the actual compiled bridge path validator on the JVM against ordinary names, traversal, absolute paths, backslashes, colons, and control characters. `node android/test-bridge.cjs` exercises the JavaScript adapter in desktop Chromium: a late folder callback cannot restore cleared work, size checks precede the browser crypto handler, and saving passes the intended filename and bytes to the bounded bridge. Both checks passed locally. They do not emulate Android's WebView, document providers, picker UI, lifecycle, or permission enforcement; those remain device/emulator checks.
+`android/tests/PathValidationTest.java` exercises the actual compiled bridge path validator on the JVM against ordinary names, traversal, absolute paths, backslashes, colons, and control characters. `node android/test-bridge.cjs` exercises the JavaScript adapter in desktop Chromium: a late folder callback cannot restore cleared work, size checks precede the browser crypto handler, saving passes the intended filename and bytes to the bounded bridge, and Use OpenPGP opens the inline key controls without navigating. Both checks passed locally. They do not emulate Android's WebView, document providers, picker UI, lifecycle, or permission enforcement; those remain device/emulator checks.
+
+The APK bundles the shared browser workspace at build time, including key import and local fingerprint display. **Use OpenPGP** opens its advanced key controls in the same offline page. Paste or import an existing recipient public key to encrypt, or the matching private key and its passphrase to decrypt. There is no online key linking or key server. A refreshed website does not update an installed APK; install the refreshed APK to receive its interface changes.
 
 ## Source references
 
