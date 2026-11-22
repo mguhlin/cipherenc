@@ -63,7 +63,26 @@ func selfTest(dir string) error {
 	if e != nil || string(data) != "Synthetic sample" {
 		return errors.New("folder restore failed")
 	}
-	report := map[string]any{"aes_round_trip": true, "xchacha_round_trip": true, "tamper_rejected": true, "wrong_password_rejected": true, "nested_folder_restore": true, "browser_required": false}
+	note, e := sealText("Native/browser note.\n\n", password)
+	if e != nil {
+		return e
+	}
+	if e = os.WriteFile(filepath.Join(dir, "native-text.cen"), note, 0600); e != nil {
+		return e
+	}
+	archiveSourcePath := filepath.Join(dir, "Archive demo")
+	if e = os.MkdirAll(filepath.Join(archiveSourcePath, "Empty"), 0700); e != nil {
+		return e
+	}
+	if e = os.WriteFile(filepath.Join(archiveSourcePath, "note.txt"), []byte("Native ZIP bytes.\n\n"), 0600); e != nil {
+		return e
+	}
+	archive, e := encryptAdjacent(archiveSourcePath, password, func() error { return nil }, func(float64) {})
+	if e != nil {
+		return e
+	}
+	archive.close()
+	report := map[string]any{"aes_round_trip": true, "xchacha_round_trip": true, "tamper_rejected": true, "wrong_password_rejected": true, "nested_folder_restore": true, "browser_required": false, "compressed_archive": true, "portable_text": true}
 	b, _ := json.MarshalIndent(report, "", "  ")
 	return os.WriteFile(filepath.Join(dir, "self-test.json"), b, 0600)
 }

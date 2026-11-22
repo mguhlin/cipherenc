@@ -425,6 +425,49 @@ func openPackage(data []byte, password string) ([]vaultFile, error) {
 	}
 	return openAES(data, password)
 }
+
+// sealText produces the same portable, pasteable PRISMVAULT3 envelope as the
+// browser edition, using the existing Argon2id and AES-GCM implementation.
+func sealText(note, password string) ([]byte, error) {
+	content := []byte(note)
+	defer clear(content)
+	if len(content) > 128<<20 {
+		return nil, errors.New("Text exceeds the 128 MiB limit.")
+	}
+	h := vaultHeader{V: 3, Alg: "AES-256-GCM", KDF: "Argon2id-v1.3", Memory: 65536, Passes: 3, Parallelism: 1, KeyLength: 32, Salt: make([]byte, 16), IV: make([]byte, 12)}
+	if _, err := rand.Read(h.Salt); err != nil {
+		return nil, err
+	}
+	if _, err := rand.Read(h.IV); err != nil {
+		return nil, err
+	}
+	key, err := derived(h, password)
+	if err != nil {
+		return nil, err
+	}
+	defer clear(key)
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	aead, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+	raw, _ := json.Marshal(h)
+	meta, _ := json.Marshal(metadata{Kind: "text", Name: "private-note.txt", Entries: []vaultFile{}})
+	plain := make([]byte, 4+len(meta)+len(content))
+	defer clear(plain)
+	binary.BigEndian.PutUint32(plain, uint32(len(meta)))
+	copy(plain[4:], meta)
+	copy(plain[4+len(meta):], content)
+	header := make([]byte, 12+len(raw))
+	copy(header, "CSPTXT3!")
+	binary.BigEndian.PutUint32(header[8:], uint32(len(raw)))
+	copy(header[12:], raw)
+	packed := aead.Seal(header, h.IV, plain, header)
+	return []byte("PRISMVAULT3." + base64.StdEncoding.EncodeToString(packed)), nil
+}
 func saveNew(name string, data []byte) error {
 	f, e := os.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 	if e != nil {

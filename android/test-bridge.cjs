@@ -39,7 +39,7 @@ const types = {'.html':'text/html','.js':'application/javascript','.css':'text/c
     await page.locator('#chooseFolder').click();
     const current = await page.evaluate(() => window.androidCalls.at(-1).token);
     assert.equal(await page.evaluate(async token => {
-      window.CipherEncAndroidFolder(token, [{path:'folder/note.txt',data:btoa('Synthetic note')}]);
+      await window.CipherEncAndroidFolder(token, [{path:'folder/note.txt',data:btoa('Synthetic note')}]);
       return await selectedEntries[0].file.text();
     }, current), 'Synthetic note');
     await page.evaluate(() => {

@@ -1,0 +1,3 @@
+# Maintainer-only X11 protocol fixture; never imported by CipherEnc.
+python-xlib==0.33
+six==1.17.0

@@ -18,6 +18,7 @@ docs=['README.md','VCC-REVIEW.md']
 notices=['LICENSE','THIRD-PARTY-NOTICES.md','UPSTREAM-LICENSE','UPSTREAM-NOTICE.md','GO-LICENSE']
 for name in docs:shutil.copy2(root/name,support/name)
 for name in notices:shutil.copy2(root/name,licenses/name)
+shutil.copy2(root/'internal/tkdnd/LICENSE',licenses/'TkDND-LICENSE')
 # Preserve all third-party licenses without putting developer material in the launch folders.
 for folder in (root/'vendor').rglob('*'):
  if folder.is_file() and ('license' in folder.name.lower() or folder.name in ['COPYING','AUTHORS','NOTICE']):
@@ -30,7 +31,7 @@ for goos,arch,platform,kind,label in targets:
  if goos=='darwin':
   contents=folder/'CipherEnc.app'/'Contents';(contents/'MacOS').mkdir(parents=True,exist_ok=True);(contents/'Resources').mkdir(exist_ok=True)
   executable=contents/'MacOS'/'CipherEnc'
-  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':'1.0.0','CFBundleShortVersionString':'1.0.0','CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
+  info={'CFBundleName':'CipherEnc','CFBundleDisplayName':'CipherEnc','CFBundleIdentifier':'org.mguhlin.cipherenc','CFBundleVersion':'1.1.0','CFBundleShortVersionString':'1.1.0','CFBundleExecutable':'CipherEnc','CFBundlePackageType':'APPL','NSHighResolutionCapable':True,'NSHumanReadableCopyright':'CipherEnc contributors. AGPL-3.0-or-later; see bundled notices.'}
   (contents/'Info.plist').write_bytes(plistlib.dumps(info));(contents/'PkgInfo').write_bytes(b'APPL????')
   for name in docs+notices:shutil.copy2(root/name,contents/'Resources'/name)
  if not args.package_only:
@@ -39,14 +40,15 @@ for goos,arch,platform,kind,label in targets:
   subprocess.run(['go','build','-mod=vendor','-trimpath','-buildvcs=false','-ldflags',flags,'-o',str(executable),'.'],cwd=root,env=env,check=True)
  if not executable.is_file():raise SystemExit('Missing native executable: '+str(executable))
  executable.chmod(0o755)
- archive=downloads/f'CipherEnc-1.0.0-{label}.zip'
+ archive=downloads/f'CipherEnc-1.1.0-{label}.zip'
  with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
   package=Path(f'CipherEnc-{label}')
   for p in sorted(folder.rglob('*')):
    if p.is_file():z.write(p,package/p.relative_to(folder))
   for name in docs:z.write(root/name,package/'Support'/name)
   for name in notices:z.write(root/name,package/'Support'/'Licenses'/name)
-  z.writestr(str(package/'START HERE.txt'),'CipherEnc native desktop\n\nRun CipherEnc.exe on Windows, CipherEnc.app on Mac, or CipherEnc on Linux.\nNo browser or internet connection is required.\nEncrypted files use .cen. Existing files are never replaced.\nSee Support/README.md for platform and format details.\n')
+  z.write(root/'internal/tkdnd/LICENSE',package/'Support'/'Licenses'/'TkDND-LICENSE')
+  z.writestr(str(package/'START HERE.txt'),'CipherEnc native desktop\n\nRun CipherEnc.exe on Windows, CipherEnc.app on Mac, or CipherEnc on Linux.\nNo browser or internet connection is required.\nDrop files/folders, or enter text. The action is detected automatically.\nFiles/folders are zipped in memory, encrypted and verified beside their originals.\nEncrypted files use .cen. Existing files are never replaced.\nShredding is optional, asks after verification, and is best effort.\nSee Support/README.md for platform and format details.\n')
  archives.append(archive);print('Built native',label,flush=True)
 
 guides={
@@ -63,7 +65,7 @@ apk=root/'android/build/CipherEnc-Android-evaluation.apk'
 if apk.is_file():
  (out/'Android').mkdir(exist_ok=True);shutil.copy2(apk,out/'Android'/'CipherEnc.apk');copy=downloads/apk.name;shutil.copy2(apk,copy);archives.append(copy)
  (out/'Android'/'START HERE.txt').write_text('CipherEnc Android evaluation APK\n\nInstall CipherEnc.apk only if your device policy permits sideloading.\nThis development-signed Android app bundles the browser tool inside the OS WebView.\nIt uses no external browser and requests no INTERNET permission.\nIt is not the native Go desktop app. Physical Android-device testing remains pending.\n')
-source=downloads/'CipherEnc-1.0.0-source.zip'
+source=downloads/'CipherEnc-1.1.0-source.zip'
 with zipfile.ZipFile(source,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in sorted(root.rglob('*')):
   if not p.is_file():continue

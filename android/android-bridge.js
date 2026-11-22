@@ -5,6 +5,7 @@
   const MAX_INPUT = 16 * 1048576;
   const MAX_PACKAGE = 24 * 1048576;
   let saving = false;
+  let pendingSave = null;
   let selectionToken = 0;
   let savedControls = null;
   const note = document.createElement('p');
@@ -43,6 +44,7 @@
   };
   window.CipherEncAndroidResult = (success, message) => {
     saving = false;
+    if (pendingSave) { pendingSave({success, message}); pendingSave = null; }
     if (savedControls) {
       savedControls.forEach(({control, disabled}) => { control.disabled = disabled; });
       savedControls = null;
@@ -59,13 +61,12 @@
       const file = new File([data], item.path.split('/').at(-1), {type:'application/octet-stream'});
       return {file, path:item.path};
     });
-    setEntries(entries);
+    return setEntries(entries);
   };
-  document.addEventListener('click', async event => {
-    if (!event.target.closest?.('#downloadResult')) return;
-    event.preventDefault(); event.stopImmediatePropagation();
+  window.CipherEncAndroidSave = async () => {
     if (saving) return;
     saving = true;
+    const completion = new Promise(resolve => { pendingSave = resolve; });
     savedControls = [...document.querySelectorAll('button,input,textarea,select')].map(control => ({control, disabled:control.disabled}));
     savedControls.forEach(({control}) => { control.disabled = true; });
     try {
@@ -81,5 +82,11 @@
         bridge.saveFile(resultName || 'encrypted.cen', toBase64(new Uint8Array(await resultBlob.arrayBuffer())));
       }
     } catch (error) { window.CipherEncAndroidResult(false, error.message); }
+    return completion;
+  };
+  document.addEventListener('click', async event => {
+    if (!event.target.closest?.('#downloadResult')) return;
+    event.preventDefault(); event.stopImmediatePropagation();
+    await window.CipherEncAndroidSave();
   }, true);
 })();

@@ -1,0 +1,44 @@
+[
+  {
+    "platform": "linux-amd64",
+    "sha256": "85ebab6d829a693502271b19ffb6e4b64bfc4dc99f98154f98b0052bc8698f8a",
+    "source": "https://github.com/Squiblydoo/tkdnd/tree/f2b256ecf374595fa20005c479655e9fd72889f8",
+    "artifact_id": 11699576819,
+    "upstream_download": null
+  },
+  {
+    "platform": "linux-arm64",
+    "sha256": "227137a2b3486a992141c9aac292cf3e2ef8e4ea2000ade551932b7dfb491209",
+    "source": "https://github.com/Squiblydoo/tkdnd/tree/6a699630de1d41fda293aebe67a42350073bebf3",
+    "artifact_id": 11699656368,
+    "upstream_download": null
+  },
+  {
+    "platform": "windows-amd64",
+    "sha256": "58595267e58ebfd8ba0170a755d5b8ca329a9aaff1d15fc1005b48cf8828cfce",
+    "source": "https://github.com/Squiblydoo/tkdnd/tree/f2b256ecf374595fa20005c479655e9fd72889f8",
+    "artifact_id": 11699566598,
+    "upstream_download": null
+  },
+  {
+    "platform": "windows-arm64",
+    "sha256": "8392803f5a8fbeb59b7d27b3fbae6854c0c16c9bb32686b9d7d01038283c7abc",
+    "source": "https://github.com/Squiblydoo/tkdnd/tree/f2b256ecf374595fa20005c479655e9fd72889f8",
+    "artifact_id": 11699661420,
+    "upstream_download": null
+  },
+  {
+    "platform": "darwin-arm64",
+    "sha256": "e2aa1e676c741d46bfd95166419f23a4b9d9fb2ea202b473c2f6d296c36e6194",
+    "source": "https://github.com/Squiblydoo/tkdnd/tree/f2b256ecf374595fa20005c479655e9fd72889f8",
+    "artifact_id": 11699890272,
+    "upstream_download": null
+  },
+  {
+    "platform": "darwin-amd64",
+    "sha256": "9dc674f133cd03ef2c9dd01a6434e2cbc5376fd503066b60e7825fca59ff8a1d",
+    "source": "https://github.com/petasis/tkdnd/tree/6efca37a22b93b2336dc973f2b4a9ba1e3feceaf",
+    "artifact_id": null,
+    "upstream_download": "https://github.com/petasis/tkdnd/releases/tag/tkdnd-release-test-v2.9.5"
+  }
+]
