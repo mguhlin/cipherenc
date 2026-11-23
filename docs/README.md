@@ -3,6 +3,8 @@
 - `index.html` introduces CipherEnc, lists downloads and answers common questions.
 - `encrypt/index.html` is the password workspace for files, folders and text.
 - `encrypt/openpgp.html` is the key workspace, generated from the shared interface by `scripts/openpgp_page.py`.
+- `encrypt/help.html` contains browser and OpenPGP FAQs. Workspace links open it separately to preserve current input.
+- `scripts/templates/openpgp-controls.html` supplies the key controls for the dedicated page and the Android bundle.
 - `assets/` contains the banner, three-panel comic and native-app screenshots.
 
 ## Preview locally

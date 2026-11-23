@@ -37,7 +37,8 @@ function equalBytes(a,b){return a.length===b.length&&a.every((value,index)=>valu
 function detectTextIntent(){
  mode='text';inputIssue='';els.error.textContent='';clearSelection();
  const value=els.text.value.trim();if(document.body.dataset.cipherencMode==='openpgp'&&(/^PRISMVAULT[123]\./.test(value)||/^-----BEGIN PGP (PUBLIC|PRIVATE) KEY BLOCK-----/.test(value))){inputIssue=value.startsWith('PRISMVAULT')?'Use the Password workspace for this password-protected text.':'Paste keys in Step 1, not in the content box.';els.error.textContent=inputIssue;resetResult();return}const pgp=value.startsWith('-----BEGIN PGP MESSAGE-----');
- if(pgp&&cryptoMethod!=='openpgp'){setCryptoMethod('openpgp');$('.advanced-tools').open=true;}
+ if(pgp&&!$('#pgpCredentials')){inputIssue='Encrypted OpenPGP text detected. Choose Use OpenPGP above and paste it there.';els.error.textContent=inputIssue;resetResult();return}
+ if(pgp&&cryptoMethod!=='openpgp'){setCryptoMethod('openpgp');const advanced=$('.advanced-tools');if(advanced)advanced.open=true;}
  if(/^PRISMVAULT[123]\./.test(value)&&cryptoMethod!=='password')setCryptoMethod('password');
  setOperation(pgp||/^PRISMVAULT[123]\./.test(value)?'decrypt':'encrypt');
  document.getElementById('inputIntent').textContent=operation==='decrypt'?'Encrypted text detected. Enter its password or private key to unlock.':cryptoMethod==='openpgp'?'Text ready. Add the recipient’s public key in Step 1 and choose Encrypt text.':'Text ready to encrypt. Enter a password and choose Encrypt text.';
@@ -62,6 +63,7 @@ async function autoSelectEntries(entries){
   const kinds=await Promise.all(entries.map(e=>identifyFile(e.file)));
   if(token!==selectionEpoch)return;
   const encrypted=kinds.find(Boolean);
+  if(encrypted==='openpgp'&&!$('#pgpCredentials')){inputIssue='OpenPGP file detected. Choose Use OpenPGP above and select the file there.';throw Error(inputIssue)}
   if(document.body.dataset.cipherencMode==='openpgp'&&encrypted==='password')throw Error('This file uses a vault password. Open the Password workspace to unlock it.');
   if(cryptoMethod==='openpgp'&&(entries.length!==1||entries[0].path.includes('/')))throw Error('OpenPGP handles one file or message. ZIP a folder first, or use the Password workspace.');
   if(encrypted&&entries.length!==1)throw Error('Choose one encrypted package at a time. Original files and folders can be bundled together.');
@@ -69,7 +71,7 @@ async function autoSelectEntries(entries){
   if(encrypted&&cryptoMethod!==encrypted)setCryptoMethod(encrypted);
   setOperation(encrypted?'decrypt':'encrypt');storeEntries(entries);
   $('#inputIntent').textContent=encrypted?'Encrypted package detected. It will be authenticated before anything is restored.':cryptoMethod==='openpgp'?'File ready. Add the recipient’s public key in Step 1 to encrypt.':'Files ready. They will be ZIP-compressed, encrypted and verified before saving.';
-  if(cryptoMethod==='openpgp'){$('#protectionMethod').value='openpgp';$('.advanced-tools').open=true;}
+  if(cryptoMethod==='openpgp'){if($('#protectionMethod'))$('#protectionMethod').value='openpgp';const advanced=$('.advanced-tools');if(advanced)advanced.open=true;}
   // Dropping after entering credentials starts the action. Selecting files first
   // leaves the same action button available after credentials are entered.
   const ready=cryptoMethod==='password'?Boolean(els.password.value):Boolean($('#pgpKeyInput').value.trim()||pgpKeyBinary);
@@ -143,7 +145,7 @@ async function runAndSave(){
   $('#downloadResult').textContent='Save another copy';
  }catch(error){els.error.textContent='Saving did not finish: '+error.message+'. Your result is still available. Choose Save result to try again.';$('#downloadResult').textContent='Save result'}
 }
-$('#protectionMethod').addEventListener('change',event=>{setCryptoMethod(event.target.value);sync()});
+$('#protectionMethod')?.addEventListener('change',event=>{setCryptoMethod(event.target.value);sync()});
 els.password.addEventListener('keydown',event=>{if(event.key==='Enter'&&!els.run.disabled){event.preventDefault();els.run.click()}});
 els.text.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)&&!els.run.disabled){event.preventDefault();els.run.click()}});
 

@@ -9,6 +9,7 @@ app=(root/'docs/encrypt/app.js').read_text()
 assert re.search(r"APP_VERSION='([^']+)'",app)[1]==version,'Browser version differs'
 for name in ['index.html','openpgp.html']:
  assert f'CipherEnc {version} · Browser version' in (root/'docs/encrypt'/name).read_text(),name
+assert 'CipherEnc '+version+' · ' in (root/'docs/encrypt/help.html').read_text(),'Help version differs'
 landing=(root/'docs/index.html').read_text()
 assert f'Latest version: {version}' in landing,'Website release label differs'
 assert all(re.search(r'/v([^/]+)(?:/|$)',url)[1]==version for url in re.findall(r'https://github.com/mguhlin/cipherenc/releases/(?:download|tag)/[^" ]+',landing)),'Website release links differ'

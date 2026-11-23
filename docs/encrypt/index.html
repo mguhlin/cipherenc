@@ -17,16 +17,16 @@
   <link rel="stylesheet" href="security.css?v=d2d1188e5903">
   <link rel="stylesheet" href="mobile.css?v=63d50281cbb7">
   <link rel="stylesheet" href="app-language.css?v=dbf94be48a86">
-  <link rel="stylesheet" href="browser.css?v=a5fb5f11ef12">
+  <link rel="stylesheet" href="browser.css?v=6f1668846f69">
 
 
 </head>
 <body>
   <a class="skip-link" href="#workspace">Skip to secure workspace</a>
 
-  <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><img class="brand-symbol" src="assets/cipherenc-mark.svg" alt="" width="40" height="45"><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="#browser-help">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
+  <header class="nav wrap"><a class="brand" href="../" aria-label="CipherEnc home"><img class="brand-symbol" src="assets/cipherenc-mark.svg" alt="" width="40" height="45"><span>CIPHER<em>ENC</em></span></a><nav aria-label="Primary navigation"><a href="../">About & downloads</a><a href="help.html" target="_blank" rel="noopener">Help & privacy</a></nav><button id="clearWorkspace" class="secondary" type="button">Clear workspace</button></header>
   <main>
-    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h2 id="workspaceTitle">Secure workspace</h2><p class="workspace-version">CipherEnc 1.1.2 · Browser version</p><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.<span class="workspace-openpgp">Prefer OpenPGP private/public key encryption? <a href="openpgp.html">Use OpenPGP</a> or <a href="openpgp.html#key-help">learn how they work</a>.</span></p>
+    <section id="workspace" class="workspace-section wrap" aria-labelledby="workspaceTitle"><h1 id="workspaceTitle">Secure workspace</h1><p class="workspace-version">CipherEnc 1.1.2 · Browser version</p><p class="workspace-directions">Directions: Follow these three steps to safeguard your data.<span class="workspace-openpgp">Prefer OpenPGP private/public key encryption? <a href="openpgp.html">Use OpenPGP</a> or <a href="help.html#openpgp-keys" target="_blank" rel="noopener">learn how they work</a>.</span></p>
       <div class="app-shell">
 <div class="app-grid">
           <div class="control-panel">
@@ -61,21 +61,15 @@
               <div class="char-count"><span id="charCount">0</span> characters</div>
             </div>
 
-            <details id="advanced-keys" class="advanced-tools"><summary>Advanced: OpenPGP keys</summary><label class="field-label" for="protectionMethod">Protection method</label><select id="protectionMethod"><option value="password">Password (recommended)</option><option value="openpgp">OpenPGP keys</option></select>
-            <div id="pgpCredentials" class="pgp-credentials hidden">
-              <p class="step-hint">Encrypt with the recipient’s public key. Decrypt with your matching private key. Paste the key below or import an exported .asc/.pgp key file. Keys are used locally, not linked to an online account.</p>
-              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
-              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
-              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
-              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
-              <div id="pgpKeyDetails" class="key-details hidden"><strong id="pgpLoadedType"></strong><label for="pgpFingerprint">Key fingerprint — compare it with the recipient through another trusted channel</label><output id="pgpFingerprint"></output><p id="pgpKeyUse"></p></div>
-              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
-            </div>
 
-            </details>
 
             <button id="runButton" class="run-button" disabled><span class="button-lock">▣</span><span id="runLabel">Encrypt file</span><b>→</b></button>
             <div class="step-result"><h3 class="step-heading"><span class="step-number">3</span><svg class="step-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v17m-6-6 6 6 6-6M4 21v8h24v-8"/></svg><span>Get Your Result</span></h3><p class="step-hint">Look in Downloads, or the save location you chose, for your encrypted .cen file. Encrypted text also appears below so you can copy it. Decryption restores your original file automatically.</p></div>
+            <div class="status-panel workspace-status" aria-busy="false">
+              <div hidden><span id="statusChip">READY</span><h3 id="statusTitle">Ready when you are</h3></div>
+              <p id="statusCopy">Your files stay on this device.</p>
+              <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
+            </div>
             <p id="inputIntent" class="password-note" role="status">Add originals to encrypt, or an encrypted package to unlock.</p>
             <p id="errorMessage" class="error" role="alert"></p>
           </div>
@@ -92,59 +86,7 @@
       </div>
     </section>
 
-    <section class="browser-overview wrap" aria-label="How CipherEnc protects your data"><section class="browser-intro wrap"><p class="eyebrow">Browser workspace</p><h1>Protect a file, folder, or private note.</h1><p>Encryption happens on this device. Your files, text, passwords, and keys are not uploaded. Encrypted downloads use <strong>.cen</strong>.</p><p class="browser-note">Enter a strong password first, then drop your files to start. Or choose files and press the action button. Encrypted files download automatically; your browser controls the save location. On phones and tablets, start with a file or text; folder selection depends on the browser and its file picker.</p></section>          <aside class="status-panel" aria-busy="false">
-            <div class="status-top"><strong>Live security monitor</strong><span id="statusChip" class="status-chip">READY</span></div>
 
-            <div class="orb-wrap" aria-hidden="true"><div class="orb"><div class="orb-core">⌾</div></div></div><div role="status" aria-live="polite" aria-atomic="true"><h3 id="statusTitle">Ready when you are</h3><p id="statusCopy">Select a file or enter text to begin. All processing stays within this tab.</p></div>
-            <div class="progress-wrap"><div class="progress-label"><span id="progressStage">Waiting for input</span><b id="progressNumber">0%</b></div><progress id="progressTrack" class="progress-track" aria-label="Vault operation progress" max="100" value="0">0%</progress></div>
-            <div class="checks">
-              <div><span class="check">✓</span><p><strong id="algorithmLabel">AES-256-GCM</strong><small id="algorithmCopy">Authenticated encryption</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong id="keyMethodLabel">Password-derived key</strong><small id="keyMethodCopy">Strengthened with Argon2id</small></p><span class="lock">▣</span></div>
-              <div><span class="check">✓</span><p><strong>Local processing</strong><small>Network-free by design</small></p><span class="lock">▣</span></div>
-            </div>
-          </aside></section>
-
-    <section id="browser-help" class="wrap browser-help" aria-labelledby="helpTitle">
-      <h2 id="helpTitle">Browser FAQs</h2>
-      <details open><summary>What do I do first?</summary><ul>
-        <li>Set a strong password in Step 1.</li>
-        <li>Add files or a folder, or type/paste text in Step 2. Encrypted content is detected automatically.</li>
-        <li>Find the saved file or copy your text result in Step 3.</li>
-      </ul></details>
-      <details><summary>Where does my result go?</summary><ul>
-        <li>Encrypted files download automatically as .cen. Your browser controls where they save.</li>
-        <li>Some browsers ask for a save location before processing. Other browsers use their normal download settings.</li>
-        <li>The browser cannot automatically save beside your original file. Use the desktop app for that workflow.</li>
-      </ul></details>
-      <details><summary>What happens to a folder?</summary><ul>
-        <li>Files and folders are ZIP-compressed before password encryption. Unlocking unzips them automatically.</li>
-        <li>A single restored file downloads directly. For folders, supported browsers can write a new folder; others offer individual file saves or an optional ZIP.</li>
-        <li>Folder picking varies by phone and browser. Empty folders may not be included.</li>
-      </ul></details>
-      <details><summary>Can I copy encrypted text?</summary><ul>
-        <li>Yes. Encrypted text appears in a result box with a Copy button and is saved as a .cen file.</li>
-        <li>Paste the encrypted text with the same password to unlock it. If copying is blocked, select the text and copy it manually.</li>
-      </ul></details>
-      <details><summary>What if I forget the password or a file will not open?</summary><ul>
-        <li>Passwords cannot be recovered. Save yours securely.</li>
-        <li>Check the password and make sure the encrypted file is complete. Changed or incomplete files fail authentication.</li>
-        <li>OpenPGP messages need the <a href="openpgp.html">key workspace</a>. Native XChaCha20 packages need the desktop app.</li>
-      </ul></details>
-      <details><summary>Are originals shredded or replaced?</summary><ul>
-        <li>No. This browser tool leaves originals untouched.</li>
-        <li>The desktop app can ask about best-effort shredding after saving and verifying an encrypted archive.</li>
-      </ul></details>
-      <details><summary>What stays on my device?</summary><ul>
-        <li>Your files, text, passwords and keys are processed in this tab, without uploads, analytics or saved accounts.</li>
-        <li>When you open this tool online, the website receives normal requests for the page and its bundled assets.</li>
-        <li>Your browser, operating system, extensions, downloads, clipboard, device backups, and shared-device access remain under their respective controls.</li>
-      </ul></details>
-      <details><summary>What does Clear workspace do?</summary><ul>
-        <li>It releases the active inputs and results. The workspace also clears after ten idle minutes.</li>
-        <li>It does not delete downloads, clipboard contents or backups. Keep the tab open while processing, especially on phones.</li>
-      </ul></details>
-      <p><a href="../#downloads">Get the desktop app</a> · <a href="openpgp.html">Use OpenPGP keys</a></p>
-    </section>
   </main>
 
   <dialog id="passwordGenerator" class="generator-dialog" aria-labelledby="generatorTitle">
@@ -198,8 +140,8 @@
   <script src="vendor/openpgp/openpgp.min.js?v=9736f49e8179" integrity="sha384-sPmo7pGITv1/X4Bq5p4najbJZGUD3noWlHwrihDBwJ87a7DTu7sSr6uj+B5t/KA+"></script>
   <script src="vendor/hash-wasm/argon2.umd.min.js?v=dcec617a2e1b" integrity="sha384-tP0Wy54CKmng7i9EoTlPySD0hBx6Octj0VS6MfwlnUu111MPa+JLm0CCbep6XJ1W"></script>
   <script src="vendor/jszip/jszip.min.js?v=acc7e41455a8" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"></script>
-  <script src="app.js?v=ef63cae365c4" integrity="sha384-QAvVeRGKSvbgbJZPhcISq7aRWKqKoCQtgvWVu+ywgFQa2LY4N1g9xTK3ZuESGosQ"></script>
+  <script src="app.js?v=4a8567bf01f2" integrity="sha384-miPDpXyqdoCi1uSFoQD37f2A82DHPCBlpgDmrJqCIPloDFRUtQnWudjg7OHkVQh8"></script>
   <script src="app-language.js?v=7a3767648811" data-ds-language="cipherenc" data-ds-language-storage="none" integrity="sha384-WvXndbqwMbW6nkLPGcAYM6As+l+B4EzINlyudBE1FTT/GV2bZmfTZmUfZnQ3R2Cu"></script>
 <script src="restore.js?v=f7b07cbb5ba1" integrity="sha384-pKykT/rxPBDhGNiFle8vedrOMpq5kD3XsSmsg6g+9WZzO7KZmKN4pMwc5K3tZav6"></script>
-<script src="browser.js?v=bc6e80807a74" integrity="sha384-TxcOPgOcylnPIdeGabWOAUgFNLb6pHQ5VXTi3shUgJEjZuyGLXCVlkKKQeDNIoHI"></script><script src="pgp-ui.js?v=560418fdcb02" integrity="sha384-i28/1eifB0LHD4NLe4ccGlbx3cB8JYLHJD1knhsGqf1CRG6bWoPWFKnKh3UW8LQP"></script></body>
+<script src="browser.js?v=9cbc4c3e5a60" integrity="sha384-RyPGt3z/sIkuW1bOsq05de2NVt9p9343Ow45pYZwypiTQyMINLrkGO/ziSqTFKtT"></script><script src="pgp-ui.js?v=fce270d3dba8" integrity="sha384-IMIQyeNHnHGeKJ13Ic71YqWMIofo6XKLI46gKG2LX1TtnG0a6P8jqG1TqoW/2RRA"></script></body>
 </html>

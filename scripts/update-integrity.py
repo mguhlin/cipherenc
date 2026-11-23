@@ -28,13 +28,14 @@ def style(match):
 after=re.sub(r'<script\b[^>]*>',script,before)
 after=re.sub(r'<link\b(?=[^>]*\brel="stylesheet")[^>]*>',style,after)
 pgp_page=root/'openpgp.html';pgp_before=pgp_page.read_text() if pgp_page.exists() else '';pgp_after=build_openpgp(after)
+help_page=root/'help.html';help_before=help_page.read_text();help_after=re.sub(r'<script\b[^>]*>',script,help_before);help_after=re.sub(r'<link\b(?=[^>]*\brel="stylesheet")[^>]*>',style,help_after)
 manifest=root/'integrity.json';data=json.loads(manifest.read_text())
-hashes={name:hashlib.sha256(after.encode() if name=='index.html' else pgp_after.encode() if name=='openpgp.html' else (root/name).read_bytes()).hexdigest() for name in data['sha256']}
+hashes={name:hashlib.sha256(after.encode() if name=='index.html' else pgp_after.encode() if name=='openpgp.html' else help_after.encode() if name=='help.html' else (root/name).read_bytes()).hexdigest() for name in data['sha256']}
 output=json.dumps({'sha256':hashes},indent=2)+'\n'
 landing=root.parent/'index.html';landing_before=landing.read_text()
 landing_after=re.sub(r'href="encrypt/(?:\?v=[a-f0-9]{12})?(#[^" ]*)?"',lambda match:'href="encrypt/?v='+hashes['index.html'][:12]+(match[1] or '')+'"',landing_before)
 landing_after=re.sub(r'href="site\.css(?:\?v=[a-f0-9]{12})?"', 'href="site.css?v='+hashlib.sha256((root.parent/'site.css').read_bytes()).hexdigest()[:12]+'"',landing_after)
 if '--check' in sys.argv:
- if before!=after or manifest.read_text()!=output or landing_before!=landing_after or pgp_before!=pgp_after:raise SystemExit('Browser integrity records need regeneration: python3 scripts/update-integrity.py')
+ if before!=after or manifest.read_text()!=output or landing_before!=landing_after or pgp_before!=pgp_after or help_before!=help_after:raise SystemExit('Browser integrity records need regeneration: python3 scripts/update-integrity.py')
  print('Browser integrity records and content-addressed asset URLs match')
-else:page.write_text(after);manifest.write_text(output);landing.write_text(landing_after);pgp_page.write_text(pgp_after)
+else:page.write_text(after);manifest.write_text(output);landing.write_text(landing_after);pgp_page.write_text(pgp_after);help_page.write_text(help_after)

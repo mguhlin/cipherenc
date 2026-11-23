@@ -1,0 +1,12 @@
+            <details id="advanced-keys" class="advanced-tools"><summary>Advanced: OpenPGP keys</summary><label class="field-label" for="protectionMethod">Protection method</label><select id="protectionMethod"><option value="password">Password (recommended)</option><option value="openpgp">OpenPGP keys</option></select>
+            <div id="pgpCredentials" class="pgp-credentials hidden">
+              <p class="step-hint">Encrypt with the recipient’s public key. Decrypt with your matching private key. Paste the key below or import an exported .asc/.pgp key file. Keys are used locally, not linked to an online account.</p>
+              <div class="password-row"><label id="pgpKeyLabel" class="field-label" for="pgpKeyInput">Recipient public key</label><button id="choosePgpKey" class="mini-action" type="button">Import key file</button></div>
+              <input id="pgpKeyFile" type="file" accept=".asc,.pgp,.gpg,.key,text/plain,application/pgp-keys" hidden>
+              <textarea id="pgpKeyInput" class="pgp-key-input" placeholder="Paste an ASCII-armored OpenPGP public key" spellcheck="false" autocomplete="off"></textarea>
+              <div id="pgpPassphraseRow" class="hidden"><label class="field-label" for="pgpPassphrase">Private-key passphrase, if protected</label><div class="password-wrap"><input id="pgpPassphrase" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Not stored"><button id="showPgpPassphrase" type="button" aria-label="Show private-key passphrase" aria-pressed="false">◉</button></div></div>
+              <div id="pgpKeyDetails" class="key-details hidden"><strong id="pgpLoadedType"></strong><label for="pgpFingerprint">Key fingerprint — compare it with the recipient through another trusted channel</label><output id="pgpFingerprint"></output><p id="pgpKeyUse"></p></div>
+              <p id="pgpKeyStatus" class="password-note" role="status">Keys and key passphrases remain in this tab's memory and are cleared after use or inactivity.</p>
+            </div>
+
+            </details>

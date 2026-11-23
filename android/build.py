@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import sys
 import re
 import shutil
 import subprocess
@@ -69,7 +70,9 @@ def main():
     shutil.copytree(args.assets, build/'assets/web', dirs_exist_ok=True)
     shutil.copy2(ROOT/'android-bridge.js', build/'assets/web/android-bridge.js')
     index = build/'assets/web/index.html'
-    index.write_text(index.read_text().replace('</body>', '<script src="android-bridge.js"></script></body>'))
+    sys.path.insert(0,str(PROJECT/'scripts'))
+    from openpgp_page import android as android_workspace
+    index.write_text(android_workspace(index.read_text(),(args.assets/'help.html').read_text()).replace('</body>', '<script src="android-bridge.js"></script></body>'))
     with (build/'assets/web/browser.css').open('a') as css:
         css.write('\n.android-note{margin:1rem;padding:1rem;border:1px solid #d8e2ee;background:#f3f7fd;color:#0a1d3a;font:1rem/1.5 system-ui,sans-serif}\n')
     hashes = {str(path.relative_to(build/'assets/web')):hashlib.sha256(path.read_bytes()).hexdigest()

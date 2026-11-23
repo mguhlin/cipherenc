@@ -1,7 +1,7 @@
 'use strict';
 let pgpPreviewEpoch=0,pgpPreviewTimer;
 function clearPgpKeyPreview(){
- pgpPreviewEpoch++;clearTimeout(pgpPreviewTimer);
+ pgpPreviewEpoch++;clearTimeout(pgpPreviewTimer);if(!$('#pgpKeyDetails'))return;
  $('#pgpKeyDetails').classList.add('hidden');$('#pgpFingerprint').textContent='';$('#pgpLoadedType').textContent='';$('#pgpKeyUse').textContent='';
 }
 function queuePgpKeyPreview(){clearPgpKeyPreview();pgpPreviewTimer=setTimeout(previewOpenPgpKey,220)}
@@ -25,5 +25,6 @@ function syncPgpPageHelp(){
  hint.textContent=operation==='decrypt'?'Encrypted content detected. Use your matching private key and its passphrase, if protected.':'To encrypt, use the recipient’s public key. Only the matching private key can unlock the result.';
 }
 if(document.body.dataset.cipherencMode==='openpgp'){
+ if(location.hash==='#key-help')location.replace('help.html#openpgp-keys');
  setCryptoMethod('openpgp');syncPgpPageHelp();
 }

@@ -34,3 +34,5 @@ body,.workspace-section{font-size:1rem;line-height:1.6}.workspace-section :is(la
 .workspace-version{margin:.25rem 0;color:#354f6c;font-size:1rem}.browser-help ul{padding-left:1.4rem;line-height:1.7}.browser-help li+li{margin-top:.5rem}.browser-help details{padding-block:.8rem;border-top:1px solid #d8e2ee}.browser-help summary{font-weight:700}
 
 .workspace-directions a{color:#125bbd;text-decoration:underline;text-underline-offset:.12em}
+
+.workspace-section>#workspaceTitle{font-size:1.4rem;margin:0 0 1rem}.workspace-status.status-panel{padding:0;background:transparent;border:0;text-align:left;min-width:0}.workspace-status .progress-wrap{margin:0}.workspace-status p{margin:.5rem 0}.help-page h1{font-size:2rem;line-height:1.25}.help-page .browser-help{padding-block:1.5rem}.help-page{padding-bottom:2rem}

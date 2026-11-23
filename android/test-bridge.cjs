@@ -4,6 +4,8 @@ const path = require('node:path');
 const http = require('node:http');
 const assert = require('node:assert/strict');
 const {chromium} = require('@playwright/test');
+const {execFileSync}=require('node:child_process');
+const androidIndex=execFileSync('python3',[path.resolve(__dirname,'../scripts/openpgp_page.py')],{encoding:'utf8'});
 const root = path.resolve(__dirname, '../docs/encrypt');
 const types = {'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.json':'application/json'};
 (async () => {
@@ -12,7 +14,7 @@ const types = {'.html':'text/html','.js':'application/javascript','.css':'text/c
     const file = path.resolve(root, name);
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { response.writeHead(404); response.end(); return; }
     response.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream');
-    response.end(fs.readFileSync(file));
+    response.end(name==='index.html'?androidIndex:fs.readFileSync(file));
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   let browser;
