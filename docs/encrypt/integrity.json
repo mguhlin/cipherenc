@@ -7,9 +7,9 @@
     "assets/cipherenc-workspace-hero.png": "7933236ff1528d1f0c1111a4645efa08ddab604fcf94ede033e4241c49d8dae9",
     "assets/drawsplat-logo.png": "2b8132b94621190e5b900a7c6034f925eb6cd292d1ad4117d2f5ed4596eb5208",
     "assets/tools.svg": "0322b0e7ecbf5750bf478051523f885aecc4709c77a5d72705104d0aec1c3008",
-    "browser.css": "27c818359e8648fd8cc26a1486bd917791c7cbc84e70121550f95b243b162c18",
+    "browser.css": "a5fb5f11ef1218028a14aba95d59ef2ef4826a90756b853ed4d3aab44a396899",
     "browser.js": "bc6e80807a748a62ecc119b9143d920983c1f4373d060374ecc457ef743ff24d",
-    "index.html": "a94490eafd3e42803154b612a8e596d13bbe6afdfe4831ff68e8af43a06adfc8",
+    "index.html": "b3fdf4244ccf97116826511bd72479152e2b37b3b1c1b01a5b5c6cfb46255787",
     "mobile.css": "63d50281cbb7b735ccf6b57770b08be4e9e4b3cbafb6b7e040b35be11d667b85",
     "security.css": "d2d1188e59030847a7d046f3ad303ab83a17a83189e0338de10398db9959db55",
     "styles.css": "abcc0a5b320794a93efd1d13dadb6bb41eab0c9234554132893cbcebee00d348",
@@ -25,7 +25,7 @@
     "vendor/openpgp/package.json": "133bbbdb00eba6f97ec033c26f8fb2623a63be49f1909fcb1d911fad97e731fb",
     "assets/cipherenc-mark.svg": "234fbc6f6f5b7c3ecd31f5e2781acab2ec8f1cadb565a6d75de7798986895df3",
     "restore.js": "f7b07cbb5ba1431a05d7da69f73664b58ef9298dade128a31d9e5073d1492d72",
-    "openpgp.html": "0f4310584a20b0628a1c5309cbf15424c5dbd74e0b290652e7101823a651130b",
+    "openpgp.html": "8e791791be6e959c0d96ecbc0625848eeffd6aa5f68f700947df0f9685edcef3",
     "pgp-ui.js": "560418fdcb0251b72fdcd356c2af667cd433f22882dad260b515ede2cf7420b8"
   }
 }

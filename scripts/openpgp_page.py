@@ -6,7 +6,7 @@ def build(index):
  page=re.sub(r'<title>.*?</title>','<title>CipherEnc OpenPGP — Public and private keys</title>',page,count=1)
  page=page.replace('CipherEnc encrypts files, folders, and text locally with AES-256-GCM.','Encrypt with existing OpenPGP public keys or decrypt with your private key, locally on your device.')
  page=page.replace('<h2 id="workspaceTitle">Secure workspace</h2>','<h2 id="workspaceTitle">OpenPGP workspace</h2>')
- page=re.sub(r'<p class="workspace-mode-links">.*?</p>','<p class="workspace-mode-links"><a class="secondary mode-link" href="index.html">Use a password instead</a><a href="#key-help">How to add and use your keys</a></p>',page,count=1)
+ page=re.sub(r'<p class="workspace-directions">.*?</p>','<p class="workspace-directions">Directions: Follow these three steps to safeguard your data.</p>\n      <p class="workspace-mode-links"><a class="secondary mode-link" href="index.html">Use a password instead</a><a href="#key-help">How to add and use your keys</a></p>',page,count=1)
  key_start=page.index('            <div id="pgpCredentials"');key_end=page.index('            </details>',key_start)
  keys=page[key_start:key_end].replace('class="pgp-credentials hidden"','class="pgp-credentials"')
  page=page[:key_start]+page[key_end:]
